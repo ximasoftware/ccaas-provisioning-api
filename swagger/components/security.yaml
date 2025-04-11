@@ -1,0 +1,51 @@
+# security.yaml
+# Security definitions
+bearerAuth:
+  type: http
+  scheme: bearer
+  bearerFormat: JWT
+  description: |
+    ## JWT Authentication
+
+    All API requests must be authenticated using a JWT token signed with your client's private key.
+    The public key to verify the signature should be obtained from the JWKS endpoint.
+
+    ### JWKS Endpoint
+
+    The JWKS (JSON Web Key Set) endpoint is located at `/api/v1/.well-known/jwks.json`.
+    This endpoint provides the public keys needed to verify JWT signatures.
+
+    ### JWT Creation Process
+
+    1.  **JSON Serialization:** Serialize the JSON request body using `json.dumps` (or an equivalent) with `sort_keys=False` and `separators=(',', ':')`.
+    2.  **UTF-8 Encoding:** Encode the resulting JSON string as UTF-8.
+    3.  **Hashing:** Calculate a SHA-256 hash of the UTF-8 encoded JSON string.
+    4.  Create a JWT with the following structure:
+
+        **Header:**
+        ```json
+        {
+          "alg": "RS256",
+          "typ": "JWT",
+          "kid": "<key-id>"
+        }
+        ```
+        * `kid`: The Key ID. This value MUST match the `kid` value of the key you want the API to use to verify the signature. The corresponding public key can be found in the JWKS endpoint.
+
+        **Payload:**
+        ```json
+        {
+          "payload_hash": "<sha256-hash-of-request-body>",
+          "iat": <current-unix-timestamp>,
+          "jti": "<random-uuid>"
+        }
+        ```
+        * `payload_hash`: The SHA-256 hash of the request body.
+        * `iat`: The issued at timestamp (Unix epoch seconds).
+        * `jti`: A unique identifier for the token.
+    5.  Sign the JWT with your private key.
+    6.  Add the JWT to the Authorization header:
+
+        ```
+        Authorization: Bearer <jwt-token>
+        ```

@@ -1,0 +1,116 @@
+# schemas.yaml
+# Data models for the API
+Error:
+  type: object
+  properties:
+    code:
+      type: string
+      description: Error code
+    message:
+      type: string
+      description: Human-readable error message
+  required:
+    - code
+    - message
+
+LicenseUpdateRequest:
+  type: object
+  properties:
+    serial:
+      type: string
+      description: Unique customer serial number
+      example: EXAMPLECUSTOMER1D57107A415DEE77F
+    digitalOnlySeats:
+      type: integer
+      minimum: 0
+      description: Number of Digital Only tier seats
+      example: 10
+    essentialSeats:
+      type: integer
+      minimum: 0
+      description: Number of Essential tier seats
+      example: 10
+    professionalSeats:
+      type: integer
+      minimum: 0
+      description: Number of Professional tier seats
+      example: 10
+    eliteSeats:
+      type: integer
+      minimum: 0
+      description: Number of Elite tier seats
+      example: 10
+    workforceOptimizationSeats:
+      type: integer
+      minimum: 10
+      description: Number of Workforce Optimization seats (minimum 10)
+      example: 10
+    workforceManagementSeats:
+      type: integer
+      minimum: 10
+      description: Number of Workforce Management seats (minimum 10)
+      example: 10
+    speechAnalyticsSeats:
+      type: integer
+      minimum: 5
+      description: Number of Speech Analytics seats (minimum 5)
+      example: 5
+    dialerSeats:
+      type: integer
+      minimum: 5
+      description: Number of Dialer seats (minimum 5)
+      example: 5
+    additionalAiMessages:
+      type: integer
+      minimum: 0
+      description: Additional AI messages. Requires at least one Elite seat.
+      example: 5000
+  required:
+    - serial
+
+LicenseUpdateResponse:
+  type: object
+  properties:
+    serial:
+      type: string
+      description: Unique customer serial number.
+      example: EXAMPLECUSTOMER1D57107A415DEE77F
+    changes:
+      type: object
+      description: Details of the changes made to the license.
+      properties:
+        digitalOnlySeats:
+          $ref: '#/ChangeDetails'
+        essentialSeats:
+          $ref: '#/ChangeDetails'
+        professionalSeats:
+          $ref: '#/ChangeDetails'
+        eliteSeats:
+          $ref: '#/ChangeDetails'
+        workforceOptimizationSeats:
+          $ref: '#/ChangeDetails'
+        workforceManagementSeats:
+          $ref: '#/ChangeDetails'
+        speechAnalyticsSeats:
+          $ref: '#/ChangeDetails'
+        dialerSeats:
+          $ref: '#/ChangeDetails'
+        additionalAiMessages:
+          $ref: '#/ChangeDetails'
+  required:
+    - serial
+
+ChangeDetails:  # New reusable schema for change details
+  type: object
+  properties:
+    oldValue:
+      type: integer
+      description: Value before the update.
+      example: 10
+    newValue:
+      type: integer
+      description: Value after the update.
+      example: 15
+  required:
+    - oldValue
+    - newValue

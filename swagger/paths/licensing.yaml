@@ -1,0 +1,137 @@
+# paths/licensing.yaml
+update:
+  post:
+    tags:
+      - License Management
+    summary: Update license seats and features
+    description: |
+      Updates the number of seats for different license tiers and features for a customer.
+      Requires JWT authentication with a payload hash of the request body.
+
+      **Restrictions:**
+
+      * Seat quantities (`digitalOnlySeats`, `essentialSeats`, etc.) must be integers. See the schema for minimum values.
+      * `workforceOptimizationSeats` and `workforceManagementSeats` have a minimum value of 10.
+      * `speechAnalyticsSeats` and `dialerSeats` have a minimum value of 5.
+      * `additionalAiMessages` is the number of additional AI messages and requires at least one `eliteSeats`.
+
+      **Signature Generation**
+
+      To ensure data integrity, the request body must be signed.
+
+      1.  **JSON Serialization:**
+          * Serialize the JSON request body using `json.dumps` (or an equivalent function in your programming language) with the following parameters:
+              * `sort_keys=False` (to preserve property order)
+              * `separators=(',', ':')` (to minimize whitespace)
+          * This will produce a compact JSON string with no unnecessary whitespace.
+      2.  **UTF-8 Encoding:** Encode the resulting JSON string as UTF-8.
+      3.  **Hashing:** Calculate the SHA-256 hash of the UTF-8 encoded JSON string.
+      4.  Include the resulting hash in the `payload_hash` claim of your JWT.
+
+      **Example (Python)**
+
+      ```python
+      import json
+      import hashlib
+
+      payload = {
+          "serial": "EXAMPLECUSTOMER1D57107A415DEE77F",
+          "digitalOnlySeats": 10,
+          "essentialSeats": 10,
+          "professionalSeats": 10,
+          "eliteSeats": 10,
+          "workforceOptimizationSeats": 10,
+          "workforceManagementSeats": 10,
+          "speechAnalyticsSeats": 5,
+          "dialerSeats": 5,
+          "additionalAiMessages": 5000
+      }
+
+      # Serialize the JSON (important: with specific parameters)
+      payload_string = json.dumps(payload, sort_keys=False, separators=(',', ':')).encode('utf-8')
+
+      # Calculate the hash
+      payload_hash = hashlib.sha256(payload_string).hexdigest()
+
+      # ... (Include payload_hash in your JWT)
+      ```
+
+      **Important:** The server will perform the same JSON serialization to normalize the payload before verifying the signature. Adhering to the specified serialization parameters is crucial for successful signature verification.
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas.yaml#/LicenseUpdateRequest'
+          examples:
+            defaultExample:
+              value:
+                serial: EXAMPLECUSTOMER1D57107A415DEE77F
+                digitalOnlySeats: 10
+                essentialSeats: 10
+                professionalSeats: 10
+                eliteSeats: 10
+                workforceOptimizationSeats: 10
+                workforceManagementSeats: 10
+                speechAnalyticsSeats: 5
+                dialerSeats: 5
+                additionalAiMessages: 5000
+    responses:
+      '200':
+        description: License updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yaml#/LicenseUpdateResponse'
+          examples:
+            successResponse:
+              value:
+                serial: EXAMPLECUSTOMER1D57107A415DEE77F
+                changes:
+                  digitalOnlySeats:
+                    oldValue: 10
+                    newValue: 15
+                  eliteSeats:
+                    oldValue: 10
+                    newValue: 20
+                  speechAnalyticsSeats:
+                    oldValue: 5
+                    newValue: 10
+                  additionalAiMessages:
+                    oldValue: 5000
+                    newValue: 10000
+      '400':
+        description: Bad request - Invalid parameters
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yaml#/Error'
+          examples:
+            validationError:
+              value:
+                code: VALIDATION_ERROR
+                message: At least 5 speech analytics seats are required
+      '401':
+        description: Unauthorized - Invalid JWT
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yaml#/Error'
+          examples:
+            invalidToken:
+              value:
+                code: INVALID_TOKEN
+                message: The JWT signature is invalid
+      '404':
+        description: Not found - Customer serial not found
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yaml#/Error'
+            examples:
+              customerNotFound:
+                value:
+                  code: CUSTOMER_NOT_FOUND
+                  message: No customer found with the provided serial
