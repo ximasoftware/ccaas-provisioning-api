@@ -7,12 +7,12 @@ info:
 
     **Important Security Note:**
 
-    The `/api/v1/licensing/update` endpoint requires strict adherence to payload ordering and signature generation procedures.  See the endpoint documentation for details.
+    The `/v1/licensing/update` endpoint requires strict adherence to payload ordering and signature generation procedures.  See the endpoint documentation for details.
   version: 1.0.0
 tags:
   - name: License Management
 servers:
-  - url: https://lic-api.ximadev.cloud/v1
+  - url: https://api.ximadev.cloud/v1
     description: Sandbox API server for testing
 
 # Reference external files
@@ -31,5 +31,5 @@ components:
 
 # Paths are referenced from external files
 paths:
-  /api/v1/licensing/update:
+  /licensing/update:
     $ref: './paths/licensing.yaml#/update'

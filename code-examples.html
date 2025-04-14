@@ -16,6 +16,9 @@
         .bg-xima-dark-blue { background-color: #005a8c; }
         .text-xima-blue { color: #0077b6; }
         .hover\:bg-xima-dark-blue:hover { background-color: #005a8c; }
+        .gradient-blue {
+            background: linear-gradient(90deg, #0077b6 0%, #31a9ff 100%);
+        }
 
         body {
             display: flex;
@@ -28,7 +31,7 @@
         }
     </style>
 </head>
-<body>
+<body class="bg-gray-50">
 <div class="bg-xima-blue h-4"></div>
 
 <header class="bg-white shadow-sm">
@@ -36,15 +39,15 @@
         <div class="flex justify-between items-center py-4">
             <div class="flex items-center">
                 <a href="/ccaas-provisioning-api/">
-                    <img src="/ccaas-provisioning-api/img/logo.svg" alt="Xima Logo" class="h-12 w-auto">
+                    <img src="./img/logo.svg" alt="Xima Logo" class="h-12 w-auto">
                 </a>
             </div>
             <nav>
                 <ul class="flex space-x-6 text-sm font-medium">
-                    <li><a href="/ccaas-provisioning-api" class="text-gray-500 hover:text-gray-900">Home</a></li>
-                    <li><a href="/ccaas-provisioning-api/api.html" class="text-gray-500 hover:text-gray-900">API Reference</a></li>
-                    <li><a href="#" class="text-gray-500 hover:text-gray-900">Authentication</a></li>
-                    <li><a href="/ccaas-provisioning-api/code-examples.html" class="text-gray-500 hover:text-gray-900">Code Examples</a></li>
+                    <li><a href="./index.html" class="text-gray-500 hover:text-gray-900">Home</a></li>
+                    <li><a href="./api.html" class="text-gray-500 hover:text-gray-900">API Reference</a></li>
+                    <li><a href="./authentication.html" class="text-gray-500 hover:text-gray-900">Authentication</a></li>
+                    <li><a href="#" class="text-gray-900 font-semibold">Code Examples</a></li>
                 </ul>
             </nav>
         </div>
@@ -57,26 +60,148 @@
             <div class="text-center">
                 <h1 class="text-3xl font-bold text-white sm:text-4xl">Interactive Code Examples</h1>
                 <p class="mt-3 max-w-2xl mx-auto text-xl text-white">
-                    Explore the License Provisioning API with a step-by-step Colab notebook.
+                    Explore the License Provisioning API with our comprehensive Colab notebook
                 </p>
             </div>
         </div>
     </div>
 
-    <div class="max-w-4xl mx-auto py-16 px-6 text-center">
-        <p class="mb-6 text-lg text-gray-700">This notebook walks you through:</p>
-        <ul class="text-left list-disc list-inside text-gray-700 mb-6">
-            <li>Generating a private key and CSR</li>
-            <li>Simulating certificate issuance</li>
-            <li>Creating and signing a JWT with that cert</li>
-            <li>Making a live request to the sandbox license update API</li>
-        </ul>
+    <div class="max-w-4xl mx-auto py-12 px-6">
+        <div class="mb-12 text-center">
+            <div class="mb-8">
+                <svg class="w-24 h-24 mx-auto text-xima-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+                <h2 class="text-2xl font-bold text-gray-900 mt-4">Interactive Colab Notebook</h2>
+                <p class="mt-2 text-lg text-gray-600 max-w-2xl mx-auto">
+                    We've created a fully interactive Google Colab notebook that guides you through the entire process of working with our API.
+                </p>
+            </div>
 
-        <a href="https://colab.research.google.com/github/ximasoftware/ccaas-provisioning-api/blob/main/xima_api_jwt_auth_example.ipynb"
-           target="_blank"
-           class="inline-flex items-center px-6 py-3 bg-xima-blue text-white font-medium rounded hover:bg-xima-dark-blue">
-            🚀 Open in Google Colab
-        </a>
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+                <h3 class="text-xl font-bold text-gray-900 mb-4">What's Included in the Notebook?</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 h-6 w-6 text-xima-blue mr-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                        </div>
+                        <span class="text-gray-700">Private key and CSR generation</span>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 h-6 w-6 text-xima-blue mr-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                        </div>
+                        <span class="text-gray-700">Certificate validation and handling</span>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 h-6 w-6 text-xima-blue mr-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                        </div>
+                        <span class="text-gray-700">JWT creation and signing</span>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 h-6 w-6 text-xima-blue mr-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                        </div>
+                        <span class="text-gray-700">Complete license update API workflow</span>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 h-6 w-6 text-xima-blue mr-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                        </div>
+                        <span class="text-gray-700">JTI and expiration time handling</span>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 h-6 w-6 text-xima-blue mr-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                        </div>
+                        <span class="text-gray-700">Response parsing and error handling</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 text-left mb-8">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-yellow-700">
+                            <strong>Note:</strong> This notebook implements all the authentication requirements detailed in our <a href="./authentication.html" class="font-medium underline">Authentication documentation</a>, including proper handling of JTI and expiration time.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <a href="https://colab.research.google.com/github/ximasoftware/ccaas-provisioning-api/blob/main/xima_api_jwt_auth_example.ipynb"
+               target="_blank"
+               class="inline-flex items-center px-8 py-4 bg-xima-blue text-white font-medium rounded-lg hover:bg-xima-dark-blue transition-colors duration-200 text-lg">
+                <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12.2 9L12.2 11.8L15 11.8L15 9L12.2 9ZM9 9L9 11.8L11.8 11.8L11.8 9L9 9ZM12.2 12.2L12.2 15L15 15L15 12.2L12.2 12.2ZM9 12.2L9 15L11.8 15L11.8 12.2L9 12.2Z" fill="currentColor"/>
+                    <path d="M19.5 3.09998L8.70002 3.09998C7.80002 3.09998 7.10002 3.79998 7.10002 4.69998L7.10002 7.79998L4.60002 7.79998C3.70002 7.79998 3.00002 8.49998 3.00002 9.39998L3.00002 18.9C3.00002 19.8 3.70002 20.5 4.60002 20.5L9.90002 20.5C10.7 20.5 11.5 19.8 11.5 18.9L11.5 15.8L19.4 15.8C20.3 15.8 21 15.1 21 14.2L21 4.69998C21 3.79998 20.3 3.09998 19.5 3.09998ZM9.90002 18.9L4.60002 18.9L4.60002 9.39998L7.10002 9.39998L7.10002 14.2C7.10002 15.1 7.80002 15.8 8.70002 15.8L9.90002 15.8L9.90002 18.9ZM19.5 14.2L8.70002 14.2L8.70002 4.69998L19.5 4.69998L19.5 14.2Z" fill="currentColor"/>
+                </svg>
+                Open in Google Colab
+            </a>
+
+            <p class="mt-4 text-sm text-gray-500">
+                The notebook runs in your browser and doesn't require any local installation
+            </p>
+        </div>
+
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4 text-center">How to Use the Notebook</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <div class="w-12 h-12 rounded-full gradient-blue text-white flex items-center justify-center font-bold mb-4">1</div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Open the Notebook</h3>
+                    <p class="text-gray-700">Click the button above to launch the notebook in Google Colab in your browser.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <div class="w-12 h-12 rounded-full gradient-blue text-white flex items-center justify-center font-bold mb-4">2</div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Run the Cells</h3>
+                    <p class="text-gray-700">Execute each cell in sequence by clicking the play button or pressing Shift+Enter.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <div class="w-12 h-12 rounded-full gradient-blue text-white flex items-center justify-center font-bold mb-4">3</div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Experiment</h3>
+                    <p class="text-gray-700">Modify values, try different parameters, and see how the API responds.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-12">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Need More Information?</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
+                <a href="./authentication.html" class="block bg-white p-6 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200">
+                    <svg class="h-10 w-10 text-xima-blue mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                    <h3 class="text-lg font-medium text-gray-900">Authentication Documentation</h3>
+                    <p class="mt-2 text-sm text-gray-500">View the complete authentication guide with detailed examples</p>
+                </a>
+                <a href="./api.html" class="block bg-white p-6 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200">
+                    <svg class="h-10 w-10 text-xima-blue mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <h3 class="text-lg font-medium text-gray-900">API Reference</h3>
+                    <p class="mt-2 text-sm text-gray-500">Browse the complete API documentation with all endpoints</p>
+                </a>
+            </div>
+        </div>
     </div>
 </main>
 

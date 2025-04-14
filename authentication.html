@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Authentication — Xima CCaaS License Provisioning API</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js" integrity="sha512-AKaNmg8COK0zEbjTdMHJAPJ0z6NwQ2xCKkc4YxoVtqoI4C/1WVaJIpBqhS9wQDqEpZSqE/OAuMh4D3/L4ppNbA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js" integrity="sha512-QkEHUDFlh+pZMGhZfP08xKlMZH7+QqgMPKBuePRSX5YTcN4qLQNboHOWmQ0/YMdR38bbcy10f1ZEFJdP3G/JnA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-BttltKXFyWnGZQcRWj6OSjLGCxGgQ9Mr+VEtUOqQQEGGEGOCFZdNuFJQVDHQjO6N1LAfHxlB0zrjE6QW5dnRIw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" integrity="sha512-vswe+cgvic/XBoF1OcM/TeJ2FW0OofqAVdCZiEYkd6dwGXthvkSFWOoGGJgS2CW70VK5dQM5Oh+7ne47s74VTg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style type="text/tailwindcss">
+    @theme {
+      --color-xima-blue: #0077b6;
+      --color-xima-dark-blue: #005a8c;
+      --color-xima-light-blue: #31a9ff;
+    }
+
+    .bg-xima-blue { background-color: #0077b6; }
+    .bg-xima-dark-blue { background-color: #005a8c; }
+    .text-xima-blue { color: #0077b6; }
+    .hover\:bg-xima-dark-blue:hover { background-color: #005a8c; }
+
+    .gradient-blue {
+      background: linear-gradient(90deg, #0077b6 0%, #31a9ff 100%);
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    main {
+      flex: 1;
+    }
+
+    .code-block {
+      border-radius: 0.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .code-block pre {
+      margin: 0 !important;
+      border-radius: 0.5rem;
+      padding: 1rem !important;
+    }
+
+    .code-tabs {
+      display: flex;
+      border-top-left-radius: 0.5rem;
+      border-top-right-radius: 0.5rem;
+      overflow: hidden;
+    }
+
+    .code-tab {
+      padding: 0.5rem 1rem;
+      background-color: #2d2d2d;
+      color: #ccc;
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+
+    .code-tab.active {
+      background-color: #1e1e1e;
+      color: white;
+    }
+
+    .token.comment {
+      color: #6c8998;
+    }
+
+    .token.keyword {
+      color: #569CD6;
+    }
+
+    .token.function {
+      color: #DCDCAA;
+    }
+
+    .token.string {
+      color: #CE9178;
+    }
+
+    .token.punctuation {
+      color: #D4D4D4;
+    }
+
+    /* Custom styles for the flowchart */
+    .auth-flow {
+      max-width: 800px;
+      margin: 2rem auto;
+    }
+
+    .auth-step {
+      display: flex;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    .auth-step::after {
+      content: "";
+      position: absolute;
+      left: 2.5rem;
+      top: 3.5rem;
+      height: calc(100% - 1rem);
+      width: 2px;
+      background-color: #e5e7eb;
+    }
+
+    .auth-step:last-child::after {
+      display: none;
+    }
+
+    .auth-number {
+      width: 5rem;
+      height: 5rem;
+      flex-shrink: 0;
+      border-radius: 9999px;
+      font-size: 1.875rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    .auth-content {
+      flex-grow: 1;
+      padding: 1.5rem;
+      margin-left: 1rem;
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg-xima-blue h-4"></div>
+
+<header class="bg-white shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center py-4">
+            <div class="flex items-center">
+                <a href="/ccaas-provisioning-api/">
+                    <img src="./img/logo.svg" alt="Xima Logo" class="h-12 w-auto">
+                </a>
+            </div>
+            <nav>
+                <ul class="flex space-x-6 text-sm font-medium">
+                    <li><a href="./index.html" class="text-gray-500 hover:text-gray-900">Home</a></li>
+                    <li><a href="./api.html" class="text-gray-500 hover:text-gray-900">API Reference</a></li>
+                    <li><a href="#" class="text-gray-500 hover:text-gray-900">Authentication</a></li>
+                    <li><a href="./code-examples.html" class="text-gray-500 hover:text-gray-900">Code Examples</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<div class="bg-xima-blue">
+    <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+            <h1 class="text-3xl font-bold text-white sm:text-4xl">JWT Authentication</h1>
+            <p class="mt-3 max-w-2xl mx-auto text-xl text-white">
+                Learn how to authenticate your requests to the Xima CCaaS License Provisioning API.
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="max-w-4xl mx-auto py-12 px-6">
+    <div class="mb-12">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">Authentication Overview</h2>
+        <p class="text-gray-700 mb-4">
+            The Xima CCaaS License Provisioning API uses JWT (JSON Web Token) authentication with client-side signatures. This approach provides strong security for your API requests without requiring you to transmit sensitive credentials.
+        </p>
+        <p class="text-gray-700 mb-4">
+            To authenticate your requests, you'll need to:
+        </p>
+        <ol class="list-decimal list-inside space-y-2 text-gray-700 mb-6">
+            <li>Prepare your license payload including a unique JTI (JWT ID) and expiration time</li>
+            <li>Create a hash of the payload</li>
+            <li>Build a JWT containing the payload hash</li>
+            <li>Sign the JWT with your private key</li>
+            <li>Include the JWT in the Authorization header</li>
+        </ol>
+        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-yellow-700">
+                        <strong>Important:</strong> Never hardcode your private keys in client-side code or share them publicly. This example uses a private key for demonstration purposes only.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-12">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">Authentication Process</h2>
+
+        <div class="auth-flow">
+            <!-- Step 1 -->
+            <div class="auth-step">
+                <div class="auth-number gradient-blue text-white">1</div>
+                <div class="auth-content">
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Prepare License Payload with JTI and Expiration</h3>
+                    <p class="text-gray-700 mb-2">
+                        Create a JSON object containing the license parameters you want to update, including a unique JTI (JWT ID) and expiration timestamp to prevent replay attacks.
+                    </p>
+                    <div class="code-block">
+              <pre class="line-numbers language-python"><code>import uuid
+import time
+
+# Generate a unique JTI
+jti = str(uuid.uuid4())
+
+# Set expiration time (30 minutes in the future)
+current_time = int(time.time())
+expiration_time = current_time + (30 * 60)
+
+license_payload = {
+    "serial": "EXAMPLECUSTOMER1D57107A415DEE77F",
+    "digitalOnlySeats": 15,
+    "essentialSeats": 15,
+    "professionalSeats": 15,
+    "eliteSeats": 15,
+    "workforceOptimizationSeats": 15,
+    "workforceManagementSeats": 15,
+    "speechAnalyticsSeats": 6,
+    "dialerSeats": 6,
+    "additionalAiMessages": 6000,
+    "jti": jti,            # Include JTI in the payload
+    "exp": expiration_time # Include expiration timestamp
+}</code></pre>
+                    </div>
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mt-2">
+                        <p class="text-sm text-blue-700">
+                            <strong>Note:</strong> The JTI should be a unique UUID for each request. The expiration time must be a Unix timestamp (seconds since epoch) no more than 30 minutes in the future. The server will track used JTIs until their expiration to prevent replay attacks.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="auth-step">
+                <div class="auth-number gradient-blue text-white">2</div>
+                <div class="auth-content">
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Hash the Payload</h3>
+                    <p class="text-gray-700 mb-2">
+                        Serialize the JSON with specific parameters and calculate its SHA-256 hash.
+                    </p>
+                    <div class="code-block">
+              <pre class="line-numbers language-python"><code>import json
+import hashlib
+
+# Serialize JSON with specific parameters
+payload_string = json.dumps(license_payload, sort_keys=False, separators=(',', ':')).encode('utf-8')
+
+# Calculate SHA-256 hash
+payload_hash = hashlib.sha256(payload_string).hexdigest()</code></pre>
+                    </div>
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mt-2">
+                        <p class="text-sm text-blue-700">
+                            <strong>Note:</strong> The serialization parameters are critical. You must use <code>sort_keys=False</code> and <code>separators=(',', ':')</code> for the server to calculate the same hash.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="auth-step">
+                <div class="auth-number gradient-blue text-white">3</div>
+                <div class="auth-content">
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Create JWT</h3>
+                    <p class="text-gray-700 mb-2">
+                        Build the JWT header and payload, including the payload hash from step 2.
+                    </p>
+                    <div class="code-block">
+              <pre class="line-numbers language-python"><code>import base64
+
+# JWT Header
+jwt_header = {
+    "alg": "RS256",
+    "typ": "JWT",
+    "kid": "your-key-id"  # The key ID received from Xima
+}
+
+# JWT Payload - Simplified, no iat (now in license payload)
+jwt_payload = {
+    "payload_hash": payload_hash
+}
+
+# Base64URL encoding function
+def base64url_encode(data: bytes) -> str:
+    return base64.urlsafe_b64encode(data).rstrip(b'=').decode('utf-8')
+
+# Encode header and payload
+header_encoded = base64url_encode(json.dumps(jwt_header).encode('utf-8'))
+payload_encoded = base64url_encode(json.dumps(jwt_payload).encode('utf-8'))</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="auth-step">
+                <div class="auth-number gradient-blue text-white">4</div>
+                <div class="auth-content">
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Sign the JWT</h3>
+                    <p class="text-gray-700 mb-2">
+                        Sign the encoded header and payload with your private key.
+                    </p>
+                    <div class="code-block">
+              <pre class="line-numbers language-python"><code>from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives import hashes
+
+# Assuming private_key is your loaded RSA private key
+message = f"{header_encoded}.{payload_encoded}".encode('utf-8')
+
+# Sign the message
+signature = private_key.sign(
+    message,
+    padding.PKCS1v15(),
+    hashes.SHA256()
+)
+
+# Encode the signature
+signature_encoded = base64url_encode(signature)
+
+# Combine to form complete JWT
+jwt = f"{header_encoded}.{payload_encoded}.{signature_encoded}"</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5 -->
+            <div class="auth-step">
+                <div class="auth-number gradient-blue text-white">5</div>
+                <div class="auth-content">
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Send Authenticated Request</h3>
+                    <p class="text-gray-700 mb-2">
+                        Make the API request with the JWT in the Authorization header and the JSON payload in the body.
+                    </p>
+                    <div class="code-block">
+              <pre class="line-numbers language-python"><code>import requests
+
+# API endpoint
+api_url = "https://licensing.api.ximadev.cloud/v1/api/licensing/update"
+
+# Headers with JWT
+headers = {
+    "Authorization": f"Bearer {jwt}",
+    "Content-Type": "application/json"
+}
+
+# Send request with the exact serialized payload used for hashing
+response = requests.post(
+    api_url,
+    headers=headers,
+    data=payload_string  # Important: Use the same string that was hashed
+)
+
+# Process response
+if response.status_code == 200:
+    print("Success!")
+    print(response.json())
+else:
+    print(f"Error: {response.status_code}")
+    print(response.text)</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-12">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">Complete Code Example</h2>
+        <p class="text-gray-700 mb-4">
+            Here's a complete Python example that puts everything together into a reusable function.
+        </p>
+
+        <div class="code-block">
+        <pre class="line-numbers language-python"><code>import json
+import hashlib
+import uuid
+import time
+import base64
+import requests
+from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.serialization import load_pem_private_key
+
+def update_license(private_key_pem, key_id, license_data, api_url, expiration_minutes=30):
+    """
+    Update license using the Xima CCaaS API with JWT authentication
+
+    Args:
+        private_key_pem (str): PEM-encoded private key
+        key_id (str): Key ID (kid) provided by Xima
+        license_data (dict): License payload (without JTI/exp, will be added)
+        api_url (str): API endpoint URL
+        expiration_minutes (int): Minutes until expiration (default: 30, max: 30)
+
+    Returns:
+        dict: API response data
+    """
+    # Load private key
+    private_key = load_pem_private_key(
+        private_key_pem.encode('utf-8'),
+        password=None
+    )
+
+    # Ensure expiration is within limits
+    expiration_minutes = min(expiration_minutes, 30)
+
+    # Calculate expiration time
+    current_time = int(time.time())
+    expiration_time = current_time + (expiration_minutes * 60)
+
+    # Step 1: Add JTI and expiration to the license payload
+    license_data_with_auth = license_data.copy()
+    license_data_with_auth["jti"] = str(uuid.uuid4())
+    license_data_with_auth["exp"] = expiration_time
+
+    # Step 2: Serialize payload with specific parameters
+    payload_string = json.dumps(license_data_with_auth, sort_keys=False, separators=(',', ':')).encode('utf-8')
+    payload_hash = hashlib.sha256(payload_string).hexdigest()
+
+    # Step 3: Base64URL encode function
+    def base64url_encode(data):
+        return base64.urlsafe_b64encode(data).rstrip(b'=').decode('utf-8')
+
+    # Step 4: Create JWT header and payload
+    jwt_header = {
+        "alg": "RS256",
+        "typ": "JWT",
+        "kid": key_id
+    }
+
+    # Simplified JWT payload - only contains the hash
+    jwt_payload = {
+        "payload_hash": payload_hash
+    }
+
+    # Step 5: Encode header and payload
+    header_encoded = base64url_encode(json.dumps(jwt_header).encode('utf-8'))
+    payload_encoded = base64url_encode(json.dumps(jwt_payload).encode('utf-8'))
+
+    # Step 6: Sign the JWT
+    message = f"{header_encoded}.{payload_encoded}".encode('utf-8')
+    signature = private_key.sign(
+        message,
+        padding.PKCS1v15(),
+        hashes.SHA256()
+    )
+    signature_encoded = base64url_encode(signature)
+
+    # Step 7: Build complete JWT
+    jwt = f"{header_encoded}.{payload_encoded}.{signature_encoded}"
+
+    # Step 8: Send authenticated request
+    headers = {
+        "Authorization": f"Bearer {jwt}",
+        "Content-Type": "application/json"
+    }
+
+    response = requests.post(
+        api_url,
+        headers=headers,
+        data=payload_string
+    )
+
+    # Step 9: Handle response
+    if response.status_code == 200:
+        return response.json()
+    else:
+        raise Exception(f"API Error ({response.status_code}): {response.text}")
+
+# Example usage
+if __name__ == "__main__":
+    # Your private key loaded from secure storage
+    with open('private_key.pem', 'r') as f:
+        private_key_pem = f.read()
+
+    # Key ID provided by Xima after CSR process
+    key_id = "f76bd221-8dda-4f49-a004-3545bc8b7b67"
+
+    # License data to update
+    license_data = {
+        "serial": "EXAMPLECUSTOMER1D57107A415DEE77F",
+        "digitalOnlySeats": 15,
+        "essentialSeats": 15,
+        "professionalSeats": 15,
+        "eliteSeats": 15,
+        "workforceOptimizationSeats": 15,
+        "workforceManagementSeats": 15,
+        "speechAnalyticsSeats": 6,
+        "dialerSeats": 6,
+        "additionalAiMessages": 6000
+    }
+
+    # API endpoint
+    api_url = "https://licensing.api.ximadev.cloud/v1/api/licensing/update"
+
+    try:
+        result = update_license(private_key_pem, key_id, license_data, api_url)
+        print("License update successful:")
+        print(json.dumps(result, indent=2))
+    except Exception as e:
+        print(f"Error: {str(e)}")</code></pre>
+        </div>
+    </div>
+
+    <div class="mb-12">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">Common Issues & Troubleshooting</h2>
+
+      <div class="space-y-6">
+        <div class="bg-white shadow overflow-hidden rounded-lg">
+          <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-lg font-medium text-gray-900">Invalid Signature Error</h3>
+            <div class="mt-2 text-gray-700">
+              <p>If you receive an <code>INVALID_SIGNATURE</code> error, check the following:</p>
+              <ul class="list-disc list-inside mt-2 space-y-1">
+                <li>Ensure you're using the correct serialization parameters (<code>sort_keys=False</code>, <code>separators=(',', ':')</code>)</li>
+                <li>Verify you're using the same exact serialized payload string for both hashing and the request body</li>
+                <li>Confirm you're using the correct private key (matching the certificate used in the CSR process)</li>
+                <li>Make sure the <code>kid</code> in your JWT header matches the one provided by Xima</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white shadow overflow-hidden rounded-lg">
+          <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-lg font-medium text-gray-900">Expired or Invalid Token</h3>
+            <div class="mt-2 text-gray-700">
+              <p>JWT tokens have time-based validation. If you receive an <code>INVALID_TOKEN</code> error, check:</p>
+              <ul class="list-disc list-inside mt-2 space-y-1">
+                <li>Your server's clock is synchronized (NTP)</li>
+                <li>You're generating a new jti and exp for each request</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white shadow overflow-hidden rounded-lg">
+          <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-lg font-medium text-gray-900">Validation Errors</h3>
+            <div class="mt-2 text-gray-700">
+              <p>The API enforces certain business rules for license configurations:</p>
+              <ul class="list-disc list-inside mt-2 space-y-1">
+                <li><code>workforceOptimizationSeats</code> and <code>workforceManagementSeats</code> require at least 10 seats</li>
+                <li><code>speechAnalyticsSeats</code> and <code>dialerSeats</code> require at least 5 seats</li>
+                <li><code>additionalAiMessages</code> requires at least one <code>eliteSeats</code></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">Next Steps</h2>
+      <p class="text-gray-700 mb-4">
+        Now that you understand how to authenticate your API requests, you can:
+      </p>
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div class="bg-white shadow rounded-lg overflow-hidden">
+          <div class="px-4 py-6 sm:p-6">
+            <div class="flex items-center">
+              <svg class="h-6 w-6 text-xima-blue mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+              <h3 class="text-lg font-medium text-gray-900">API Reference</h3>
+            </div>
+            <div class="mt-3">
+              <p class="text-gray-700">
+                Explore the full API reference documentation to understand all available endpoints and parameters.
+              </p>
+              <div class="mt-4">
+                <a href="./api.html" class="inline-flex items-center font-medium text-xima-blue hover:underline">
+                  View API Reference
+                  <svg class="ml-1 w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white shadow rounded-lg overflow-hidden">
+          <div class="px-4 py-6 sm:p-6">
+            <div class="flex items-center">
+              <svg class="h-6 w-6 text-xima-blue mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+              </svg>
+              <h3 class="text-lg font-medium text-gray-900">Interactive Examples</h3>
+            </div>
+            <div class="mt-3">
+              <p class="text-gray-700">
+                Try the interactive examples in Google Colab to see the full authentication flow, including CSR generation and certificate handling.
+              </p>
+              <div class="mt-4">
+                <a href="./code-examples.html" class="inline-flex items-center font-medium text-xima-blue hover:underline">
+                  Try Code Examples
+                  <svg class="ml-1 w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="bg-white">
+  <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+    <p class="text-center text-sm text-gray-400">© 2025 Xima. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', (event) => {
+    Prism.highlightAll();
+  });
+</script>
+</body>
+</html>

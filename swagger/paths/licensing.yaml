@@ -15,27 +15,44 @@ update:
       * `speechAnalyticsSeats` and `dialerSeats` have a minimum value of 5.
       * `additionalAiMessages` is the number of additional AI messages and requires at least one `eliteSeats`.
 
+      **Authentication Requirements**
+
+      Each request must include:
+      * A unique `jti` (JWT ID) in the request body - never reuse IDs
+      * An `exp` (expiration) timestamp in the request body - max 30 minutes in the future
+      * A JWT with the payload hash in the Authorization header
+
       **Signature Generation**
 
       To ensure data integrity, the request body must be signed.
 
-      1.  **JSON Serialization:**
+      1.  **Request Body Preparation:**
+          * Include a unique `jti` (UUID v4) and `exp` (expiration timestamp) in your request body
+      2.  **JSON Serialization:**
           * Serialize the JSON request body using `json.dumps` (or an equivalent function in your programming language) with the following parameters:
               * `sort_keys=False` (to preserve property order)
               * `separators=(',', ':')` (to minimize whitespace)
           * This will produce a compact JSON string with no unnecessary whitespace.
-      2.  **UTF-8 Encoding:** Encode the resulting JSON string as UTF-8.
-      3.  **Hashing:** Calculate the SHA-256 hash of the UTF-8 encoded JSON string.
-      4.  Include the resulting hash in the `payload_hash` claim of your JWT.
+      3.  **UTF-8 Encoding:** Encode the resulting JSON string as UTF-8.
+      4.  **Hashing:** Calculate the SHA-256 hash of the UTF-8 encoded JSON string.
+      5.  Include the resulting hash in the `payload_hash` claim of your JWT.
 
       **Example (Python)**
 
       ```python
       import json
       import hashlib
+      import uuid
+      import time
+
+      # Current time and expiration (30 minutes in the future)
+      current_time = int(time.time())
+      expiration_time = current_time + (30 * 60)
 
       payload = {
           "serial": "EXAMPLECUSTOMER1D57107A415DEE77F",
+          "jti": str(uuid.uuid4()),  # Unique ID for this request
+          "exp": expiration_time,    # Expiration timestamp
           "digitalOnlySeats": 10,
           "essentialSeats": 10,
           "professionalSeats": 10,
@@ -56,7 +73,10 @@ update:
       # ... (Include payload_hash in your JWT)
       ```
 
-      **Important:** The server will perform the same JSON serialization to normalize the payload before verifying the signature. Adhering to the specified serialization parameters is crucial for successful signature verification.
+      **Important:**
+      * The server will perform the same JSON serialization to normalize the payload before verifying the signature.
+      * Adhering to the specified serialization parameters is crucial for successful signature verification.
+      * The server tracks used JTIs until their expiration to prevent replay attacks.
     security:
       - bearerAuth: []
     requestBody:
@@ -69,6 +89,8 @@ update:
             defaultExample:
               value:
                 serial: EXAMPLECUSTOMER1D57107A415DEE77F
+                jti: c16e0cab-5432-42d3-a2fd-8eb975dee4a9
+                exp: 1744412345
                 digitalOnlySeats: 10
                 essentialSeats: 10
                 professionalSeats: 10
@@ -85,45 +107,57 @@ update:
           application/json:
             schema:
               $ref: '../components/schemas.yaml#/LicenseUpdateResponse'
-          examples:
-            successResponse:
-              value:
-                serial: EXAMPLECUSTOMER1D57107A415DEE77F
-                changes:
-                  digitalOnlySeats:
-                    oldValue: 10
-                    newValue: 15
-                  eliteSeats:
-                    oldValue: 10
-                    newValue: 20
-                  speechAnalyticsSeats:
-                    oldValue: 5
-                    newValue: 10
-                  additionalAiMessages:
-                    oldValue: 5000
-                    newValue: 10000
+            examples:
+              successResponse:
+                value:
+                  serial: EXAMPLECUSTOMER1D57107A415DEE77F
+                  changes:
+                    digitalOnlySeats:
+                      oldValue: 10
+                      newValue: 15
+                    eliteSeats:
+                      oldValue: 10
+                      newValue: 20
+                    speechAnalyticsSeats:
+                      oldValue: 5
+                      newValue: 10
+                    additionalAiMessages:
+                      oldValue: 5000
+                      newValue: 10000
       '400':
         description: Bad request - Invalid parameters
         content:
           application/json:
             schema:
               $ref: '../components/schemas.yaml#/Error'
-          examples:
-            validationError:
-              value:
-                code: VALIDATION_ERROR
-                message: At least 5 speech analytics seats are required
+            examples:
+              validationError:
+                value:
+                  code: VALIDATION_ERROR
+                  message: At least 5 speech analytics seats are required
+              invalidJti:
+                value:
+                  code: INVALID_JTI
+                  message: JTI must be a valid UUID v4 format
+              expiredToken:
+                value:
+                  code: EXPIRED_TOKEN
+                  message: Request has expired (exp timestamp is in the past)
       '401':
         description: Unauthorized - Invalid JWT
         content:
           application/json:
             schema:
               $ref: '../components/schemas.yaml#/Error'
-          examples:
-            invalidToken:
-              value:
-                code: INVALID_TOKEN
-                message: The JWT signature is invalid
+            examples:
+              invalidToken:
+                value:
+                  code: INVALID_TOKEN
+                  message: The JWT signature is invalid
+              duplicateJti:
+                value:
+                  code: DUPLICATE_JTI
+                  message: This JTI has already been used
       '404':
         description: Not found - Customer serial not found
         content:

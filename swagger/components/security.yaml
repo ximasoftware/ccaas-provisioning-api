@@ -12,15 +12,27 @@ bearerAuth:
 
     ### JWKS Endpoint
 
-    The JWKS (JSON Web Key Set) endpoint is located at `/api/v1/.well-known/jwks.json`.
+    The JWKS (JSON Web Key Set) endpoint is located at `/v1/.well-known/jwks.json`.
     This endpoint provides the public keys needed to verify JWT signatures.
 
     ### JWT Creation Process
 
-    1.  **JSON Serialization:** Serialize the JSON request body using `json.dumps` (or an equivalent) with `sort_keys=False` and `separators=(',', ':')`.
-    2.  **UTF-8 Encoding:** Encode the resulting JSON string as UTF-8.
-    3.  **Hashing:** Calculate a SHA-256 hash of the UTF-8 encoded JSON string.
-    4.  Create a JWT with the following structure:
+    1.  **Request Body Preparation:** Include a unique JTI (JWT ID) and expiration time in your request body:
+        ```json
+        {
+          "serial": "EXAMPLECUSTOMER1D57107A415DEE77F",
+          "jti": "c16e0cab-5432-42d3-a2fd-8eb975dee4a9",
+          "exp": 1744412345,
+          // Other license properties
+        }
+        ```
+        * `jti`: A unique UUID v4 identifier for this request (prevents replay attacks)
+        * `exp`: Expiration timestamp (Unix epoch seconds) - max 30 minutes in the future
+
+    2.  **JSON Serialization:** Serialize the JSON request body using `json.dumps` (or an equivalent) with `sort_keys=False` and `separators=(',', ':')`.
+    3.  **UTF-8 Encoding:** Encode the resulting JSON string as UTF-8.
+    4.  **Hashing:** Calculate a SHA-256 hash of the UTF-8 encoded JSON string.
+    5.  Create a JWT with the following structure:
 
         **Header:**
         ```json
@@ -35,17 +47,20 @@ bearerAuth:
         **Payload:**
         ```json
         {
-          "payload_hash": "<sha256-hash-of-request-body>",
-          "iat": <current-unix-timestamp>,
-          "jti": "<random-uuid>"
+          "payload_hash": "<sha256-hash-of-request-body>"
         }
         ```
-        * `payload_hash`: The SHA-256 hash of the request body.
-        * `iat`: The issued at timestamp (Unix epoch seconds).
-        * `jti`: A unique identifier for the token.
-    5.  Sign the JWT with your private key.
-    6.  Add the JWT to the Authorization header:
+        * `payload_hash`: The SHA-256 hash of the request body (which includes the JTI and expiration).
+
+    6.  Sign the JWT with your private key.
+    7.  Add the JWT to the Authorization header:
 
         ```
         Authorization: Bearer <jwt-token>
         ```
+
+    **Security Notes:**
+    - Each JTI must be unique and should never be reused
+    - The server tracks used JTIs until their expiration time to prevent replay attacks
+    - If a request is made with a JTI that has already been used, a DUPLICATE_JTI error will be returned
+    - If a request is made after its expiration time, an EXPIRED_TOKEN error will be returned
