@@ -1,4 +1,4 @@
-# schemas.yaml
+# Updated schemas.yaml
 # Data models for the API
 Error:
   type: object
@@ -29,15 +29,6 @@ LicenseUpdateRequest:
       type: string
       description: Unique customer serial number
       example: EXAMPLECUSTOMER1D57107A415DEE77F
-    jti:
-      type: string
-      format: uuid
-      description: Unique JWT ID (UUID) for this request to prevent replay attacks
-      example: c16e0cab-5432-42d3-a2fd-8eb975dee4a9
-    exp:
-      type: integer
-      description: Expiration timestamp (Unix epoch seconds) up to 30 minutes in the future
-      example: 1744412345
     digitalOnlySeats:
       type: integer
       minimum: 0
@@ -85,8 +76,6 @@ LicenseUpdateRequest:
       example: 5000
   required:
     - serial
-    - jti
-    - exp
 
 LicenseUpdateResponse:
   type: object

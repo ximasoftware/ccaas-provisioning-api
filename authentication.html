@@ -208,25 +208,17 @@
         <h2 class="text-2xl font-bold text-gray-900 mb-4">Authentication Process</h2>
 
         <div class="auth-flow">
-            <!-- Step 1 -->
+            <!-- Step 1: Updated to remove JTI and expiration from license payload -->
             <div class="auth-step">
                 <div class="auth-number gradient-blue text-white">1</div>
                 <div class="auth-content">
-                    <h3 class="text-lg font-medium text-gray-900 mb-2">Prepare License Payload with JTI and Expiration</h3>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Prepare License Payload</h3>
                     <p class="text-gray-700 mb-2">
-                        Create a JSON object containing the license parameters you want to update, including a unique JTI (JWT ID) and expiration timestamp to prevent replay attacks.
+                        Create a JSON object containing the license parameters you want to update.
                     </p>
                     <div class="code-block">
-              <pre class="line-numbers language-python"><code>import uuid
-import time
-
-# Generate a unique JTI
-jti = str(uuid.uuid4())
-
-# Set expiration time (30 minutes in the future)
-current_time = int(time.time())
-expiration_time = current_time + (30 * 60)
-
+<pre class="line-numbers language-python"><code>
+# Create the license payload without JTI or expiration time
 license_payload = {
     "serial": "EXAMPLECUSTOMER1D57107A415DEE77F",
     "digitalOnlySeats": 15,
@@ -237,20 +229,14 @@ license_payload = {
     "workforceManagementSeats": 15,
     "speechAnalyticsSeats": 6,
     "dialerSeats": 6,
-    "additionalAiMessages": 6000,
-    "jti": jti,            # Include JTI in the payload
-    "exp": expiration_time # Include expiration timestamp
-}</code></pre>
-                    </div>
-                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mt-2">
-                        <p class="text-sm text-blue-700">
-                            <strong>Note:</strong> The JTI should be a unique UUID for each request. The expiration time must be a Unix timestamp (seconds since epoch) no more than 30 minutes in the future. The server will track used JTIs until their expiration to prevent replay attacks.
-                        </p>
+    "additionalAiMessages": 6000
+}
+</code></pre>
                     </div>
                 </div>
             </div>
 
-            <!-- Step 2 -->
+            <!-- Step 2: Hash calculation remains the same -->
             <div class="auth-step">
                 <div class="auth-number gradient-blue text-white">2</div>
                 <div class="auth-content">
@@ -259,7 +245,7 @@ license_payload = {
                         Serialize the JSON with specific parameters and calculate its SHA-256 hash.
                     </p>
                     <div class="code-block">
-              <pre class="line-numbers language-python"><code>import json
+<pre class="line-numbers language-python"><code>import json
 import hashlib
 
 # Serialize JSON with specific parameters
@@ -276,16 +262,25 @@ payload_hash = hashlib.sha256(payload_string).hexdigest()</code></pre>
                 </div>
             </div>
 
-            <!-- Step 3 -->
+            <!-- Step 3: Updated to include JTI and exp in JWT payload -->
             <div class="auth-step">
                 <div class="auth-number gradient-blue text-white">3</div>
                 <div class="auth-content">
-                    <h3 class="text-lg font-medium text-gray-900 mb-2">Create JWT</h3>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Create JWT with JTI and Expiration</h3>
                     <p class="text-gray-700 mb-2">
-                        Build the JWT header and payload, including the payload hash from step 2.
+                        Build the JWT header and payload, including the payload hash, JTI, and expiration time.
                     </p>
                     <div class="code-block">
-              <pre class="line-numbers language-python"><code>import base64
+<pre class="line-numbers language-python"><code>import base64
+import uuid
+import time
+
+# Generate a unique JTI
+jti = str(uuid.uuid4())
+
+# Set expiration time (30 minutes in the future)
+current_time = int(time.time())
+expiration_time = current_time + (30 * 60)
 
 # JWT Header
 jwt_header = {
@@ -294,9 +289,11 @@ jwt_header = {
     "kid": "your-key-id"  # The key ID received from Xima
 }
 
-# JWT Payload - Simplified, no iat (now in license payload)
+# JWT Payload - Now includes JTI and exp
 jwt_payload = {
-    "payload_hash": payload_hash
+    "payload_hash": payload_hash,
+    "jti": jti,                # Include JTI directly in JWT
+    "exp": expiration_time     # Include expiration directly in JWT
 }
 
 # Base64URL encoding function
@@ -307,76 +304,148 @@ def base64url_encode(data: bytes) -> str:
 header_encoded = base64url_encode(json.dumps(jwt_header).encode('utf-8'))
 payload_encoded = base64url_encode(json.dumps(jwt_payload).encode('utf-8'))</code></pre>
                     </div>
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mt-2">
+                        <p class="text-sm text-blue-700">
+                            <strong>Note:</strong> The JTI should be a unique UUID for each request. The expiration time must be a Unix timestamp (seconds since epoch) no more than 30 minutes in the future. The server will track used JTIs until their expiration to prevent replay attacks.
+                        </p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Step 4 -->
-            <div class="auth-step">
-                <div class="auth-number gradient-blue text-white">4</div>
-                <div class="auth-content">
-                    <h3 class="text-lg font-medium text-gray-900 mb-2">Sign the JWT</h3>
-                    <p class="text-gray-700 mb-2">
-                        Sign the encoded header and payload with your private key.
-                    </p>
-                    <div class="code-block">
-              <pre class="line-numbers language-python"><code>from cryptography.hazmat.primitives.asymmetric import padding
+            <!-- Complete Updated Code Example -->
+            <div class="code-block">
+<pre class="line-numbers language-python"><code>import json
+import hashlib
+import uuid
+import time
+import base64
+import requests
+from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.serialization import load_pem_private_key
 
-# Assuming private_key is your loaded RSA private key
-message = f"{header_encoded}.{payload_encoded}".encode('utf-8')
+def update_license(private_key_pem, key_id, license_data, api_url, expiration_minutes=30):
+    """
+    Update license using the Xima CCaaS API with JWT authentication
 
-# Sign the message
-signature = private_key.sign(
-    message,
-    padding.PKCS1v15(),
-    hashes.SHA256()
-)
+    Args:
+        private_key_pem (str): PEM-encoded private key
+        key_id (str): Key ID (kid) provided by Xima
+        license_data (dict): License payload (without JTI/exp)
+        api_url (str): API endpoint URL
+        expiration_minutes (int): Minutes until expiration (default: 30, max: 30)
 
-# Encode the signature
-signature_encoded = base64url_encode(signature)
+    Returns:
+        dict: API response data
+    """
+    # Load private key
+    private_key = load_pem_private_key(
+        private_key_pem.encode('utf-8'),
+        password=None
+    )
 
-# Combine to form complete JWT
-jwt = f"{header_encoded}.{payload_encoded}.{signature_encoded}"</code></pre>
-                    </div>
-                </div>
-            </div>
+    # Ensure expiration is within limits
+    expiration_minutes = min(expiration_minutes, 30)
 
-            <!-- Step 5 -->
-            <div class="auth-step">
-                <div class="auth-number gradient-blue text-white">5</div>
-                <div class="auth-content">
-                    <h3 class="text-lg font-medium text-gray-900 mb-2">Send Authenticated Request</h3>
-                    <p class="text-gray-700 mb-2">
-                        Make the API request with the JWT in the Authorization header and the JSON payload in the body.
-                    </p>
-                    <div class="code-block">
-              <pre class="line-numbers language-python"><code>import requests
+    # Calculate expiration time
+    current_time = int(time.time())
+    expiration_time = current_time + (expiration_minutes * 60)
 
-# API endpoint
-api_url = "https://licensing.api.ximadev.cloud/v1/api/licensing/update"
+    # Generate unique JTI
+    jti = str(uuid.uuid4())
 
-# Headers with JWT
-headers = {
-    "Authorization": f"Bearer {jwt}",
-    "Content-Type": "application/json"
-}
+    # Step 1: Use license data as-is (no JTI or exp added)
+    license_data_clean = license_data.copy()
 
-# Send request with the exact serialized payload used for hashing
-response = requests.post(
-    api_url,
-    headers=headers,
-    data=payload_string  # Important: Use the same string that was hashed
-)
+    # Step 2: Serialize payload with specific parameters
+    payload_string = json.dumps(license_data_clean, sort_keys=False, separators=(',', ':')).encode('utf-8')
+    payload_hash = hashlib.sha256(payload_string).hexdigest()
 
-# Process response
-if response.status_code == 200:
-    print("Success!")
-    print(response.json())
-else:
-    print(f"Error: {response.status_code}")
-    print(response.text)</code></pre>
-                    </div>
-                </div>
+    # Step 3: Base64URL encode function
+    def base64url_encode(data):
+        return base64.urlsafe_b64encode(data).rstrip(b'=').decode('utf-8')
+
+    # Step 4: Create JWT header and payload
+    jwt_header = {
+        "alg": "RS256",
+        "typ": "JWT",
+        "kid": key_id
+    }
+
+    # JWT payload now includes JTI and exp directly
+    jwt_payload = {
+        "payload_hash": payload_hash,
+        "jti": jti,
+        "exp": expiration_time
+    }
+
+    # Step 5: Encode header and payload
+    header_encoded = base64url_encode(json.dumps(jwt_header).encode('utf-8'))
+    payload_encoded = base64url_encode(json.dumps(jwt_payload).encode('utf-8'))
+
+    # Step 6: Sign the JWT
+    message = f"{header_encoded}.{payload_encoded}".encode('utf-8')
+    signature = private_key.sign(
+        message,
+        padding.PKCS1v15(),
+        hashes.SHA256()
+    )
+    signature_encoded = base64url_encode(signature)
+
+    # Step 7: Build complete JWT
+    jwt = f"{header_encoded}.{payload_encoded}.{signature_encoded}"
+
+    # Step 8: Send authenticated request
+    headers = {
+        "Authorization": f"Bearer {jwt}",
+        "Content-Type": "application/json"
+    }
+
+    response = requests.post(
+        api_url,
+        headers=headers,
+        data=payload_string
+    )
+
+    # Step 9: Handle response
+    if response.status_code == 200:
+        return response.json()
+    else:
+        raise Exception(f"API Error ({response.status_code}): {response.text}")
+
+# Example usage
+if __name__ == "__main__":
+    # Your private key loaded from secure storage
+    with open('private_key.pem', 'r') as f:
+        private_key_pem = f.read()
+
+    # Key ID provided by Xima after CSR process
+    key_id = "f76bd221-8dda-4f49-a004-3545bc8b7b67"
+
+    # License data to update (no JTI or exp here)
+    license_data = {
+        "serial": "EXAMPLECUSTOMER1D57107A415DEE77F",
+        "digitalOnlySeats": 15,
+        "essentialSeats": 15,
+        "professionalSeats": 15,
+        "eliteSeats": 15,
+        "workforceOptimizationSeats": 15,
+        "workforceManagementSeats": 15,
+        "speechAnalyticsSeats": 6,
+        "dialerSeats": 6,
+        "additionalAiMessages": 6000
+    }
+
+    # API endpoint
+    api_url = "https://licensing.api.ximadev.cloud/v1/api/licensing/update"
+
+    try:
+        result = update_license(private_key_pem, key_id, license_data, api_url)
+        print("License update successful:")
+        print(json.dumps(result, indent=2))
+    except Exception as e:
+        print(f"Error: {str(e)}")
+</code></pre>
             </div>
         </div>
     </div>

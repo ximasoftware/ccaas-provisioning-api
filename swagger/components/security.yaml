@@ -17,17 +17,13 @@ bearerAuth:
 
     ### JWT Creation Process
 
-    1.  **Request Body Preparation:** Include a unique JTI (JWT ID) and expiration time in your request body:
+    1.  **Request Body Preparation:** Prepare your license update request body:
         ```json
         {
           "serial": "EXAMPLECUSTOMER1D57107A415DEE77F",
-          "jti": "c16e0cab-5432-42d3-a2fd-8eb975dee4a9",
-          "exp": 1744412345,
           // Other license properties
         }
         ```
-        * `jti`: A unique UUID v4 identifier for this request (prevents replay attacks)
-        * `exp`: Expiration timestamp (Unix epoch seconds) - max 30 minutes in the future
 
     2.  **JSON Serialization:** Serialize the JSON request body using `json.dumps` (or an equivalent) with `sort_keys=False` and `separators=(',', ':')`.
     3.  **UTF-8 Encoding:** Encode the resulting JSON string as UTF-8.
@@ -47,10 +43,14 @@ bearerAuth:
         **Payload:**
         ```json
         {
-          "payload_hash": "<sha256-hash-of-request-body>"
+          "payload_hash": "<sha256-hash-of-request-body>",
+          "jti": "c16e0cab-5432-42d3-a2fd-8eb975dee4a9",
+          "exp": 1744412345
         }
         ```
-        * `payload_hash`: The SHA-256 hash of the request body (which includes the JTI and expiration).
+        * `payload_hash`: The SHA-256 hash of the request body
+        * `jti`: A unique UUID v4 identifier for this request (prevents replay attacks)
+        * `exp`: Expiration timestamp (Unix epoch seconds) - max 30 minutes in the future
 
     6.  Sign the JWT with your private key.
     7.  Add the JWT to the Authorization header:

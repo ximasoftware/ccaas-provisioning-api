@@ -18,16 +18,17 @@ update:
       **Authentication Requirements**
 
       Each request must include:
-      * A unique `jti` (JWT ID) in the request body - never reuse IDs
-      * An `exp` (expiration) timestamp in the request body - max 30 minutes in the future
-      * A JWT with the payload hash in the Authorization header
+      * A JWT with the following in its payload:
+        * A payload hash of the request body
+        * A unique `jti` (JWT ID) - never reuse IDs
+        * An `exp` (expiration) timestamp - max 30 minutes in the future
 
       **Signature Generation**
 
       To ensure data integrity, the request body must be signed.
 
       1.  **Request Body Preparation:**
-          * Include a unique `jti` (UUID v4) and `exp` (expiration timestamp) in your request body
+          * Prepare your license update request properties
       2.  **JSON Serialization:**
           * Serialize the JSON request body using `json.dumps` (or an equivalent function in your programming language) with the following parameters:
               * `sort_keys=False` (to preserve property order)
@@ -35,7 +36,7 @@ update:
           * This will produce a compact JSON string with no unnecessary whitespace.
       3.  **UTF-8 Encoding:** Encode the resulting JSON string as UTF-8.
       4.  **Hashing:** Calculate the SHA-256 hash of the UTF-8 encoded JSON string.
-      5.  Include the resulting hash in the `payload_hash` claim of your JWT.
+      5.  Include the resulting hash in the `payload_hash` claim of your JWT along with `jti` and `exp` claims.
 
       **Example (Python)**
 
@@ -45,14 +46,9 @@ update:
       import uuid
       import time
 
-      # Current time and expiration (30 minutes in the future)
-      current_time = int(time.time())
-      expiration_time = current_time + (30 * 60)
-
+      # License update payload WITHOUT jti or exp
       payload = {
           "serial": "EXAMPLECUSTOMER1D57107A415DEE77F",
-          "jti": str(uuid.uuid4()),  # Unique ID for this request
-          "exp": expiration_time,    # Expiration timestamp
           "digitalOnlySeats": 10,
           "essentialSeats": 10,
           "professionalSeats": 10,
@@ -70,7 +66,18 @@ update:
       # Calculate the hash
       payload_hash = hashlib.sha256(payload_string).hexdigest()
 
-      # ... (Include payload_hash in your JWT)
+      # Current time and expiration (30 minutes in the future)
+      current_time = int(time.time())
+      expiration_time = current_time + (30 * 60)
+
+      # Create JWT payload with security claims
+      jwt_payload = {
+          "payload_hash": payload_hash,
+          "jti": str(uuid.uuid4()),  # Unique ID for this request
+          "exp": expiration_time     # Expiration timestamp
+      }
+
+      # ... (Continue with JWT creation and signing)
       ```
 
       **Important:**
@@ -89,8 +96,6 @@ update:
             defaultExample:
               value:
                 serial: EXAMPLECUSTOMER1D57107A415DEE77F
-                jti: c16e0cab-5432-42d3-a2fd-8eb975dee4a9
-                exp: 1744412345
                 digitalOnlySeats: 10
                 essentialSeats: 10
                 professionalSeats: 10
