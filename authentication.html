@@ -292,8 +292,8 @@ jwt_header = {
 # JWT Payload - Now includes JTI and exp
 jwt_payload = {
     "payload_hash": payload_hash,
-    "jti": jti,                # Include JTI directly in JWT
-    "exp": expiration_time     # Include expiration directly in JWT
+    "jti": jti,
+    "exp": expiration_time
 }
 
 # Base64URL encoding function
@@ -312,9 +312,87 @@ payload_encoded = base64url_encode(json.dumps(jwt_payload).encode('utf-8'))</cod
                 </div>
             </div>
 
-            <!-- Complete Updated Code Example -->
-            <div class="code-block">
-<pre class="line-numbers language-python"><code>import json
+            <!-- Step 4: Sign the JWT -->
+            <div class="auth-step">
+                <div class="auth-number gradient-blue text-white">4</div>
+                <div class="auth-content">
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Sign the JWT</h3>
+                    <p class="text-gray-700 mb-2">
+                        Sign the encoded header and payload with your private key.
+                    </p>
+                    <div class="code-block">
+<pre class="line-numbers language-python"><code>from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives import hashes
+
+# Assuming private_key is your loaded RSA private key
+message = f"{header_encoded}.{payload_encoded}".encode('utf-8')
+
+# Sign the message
+signature = private_key.sign(
+    message,
+    padding.PKCS1v15(),
+    hashes.SHA256()
+)
+
+# Encode the signature
+signature_encoded = base64url_encode(signature)
+
+# Combine to form complete JWT
+jwt = f"{header_encoded}.{payload_encoded}.{signature_encoded}"</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5: Send Authenticated Request -->
+            <div class="auth-step">
+                <div class="auth-number gradient-blue text-white">5</div>
+                <div class="auth-content">
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Send Authenticated Request</h3>
+                    <p class="text-gray-700 mb-2">
+                        Make the API request with the JWT in the Authorization header and the JSON payload in the body.
+                    </p>
+                    <div class="code-block">
+<pre class="line-numbers language-python"><code>import requests
+
+# API endpoint
+api_url = "https://licensing.api.ximadev.cloud/v1/api/licensing/update"
+
+# Headers with JWT
+headers = {
+    "Authorization": f"Bearer {jwt}",
+    "Content-Type": "application/json"
+}
+
+# Send request with serialized payload
+response = requests.post(
+    api_url,
+    headers=headers,
+    data=payload_string  # This is the serialized license payload
+)
+
+# Process response
+if response.status_code == 200:
+    print("Success!")
+    print(response.json())
+else:
+    print(f"Error: {response.status_code}")
+    print(response.text)</code></pre>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="mb-12">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">Complete Code Example</h2>
+        <p class="text-gray-700 mb-4">
+            Here's a complete Python example that puts everything together into a reusable function.
+        </p>
+
+        <div class="code-block">
+    <pre class="line-numbers language-python"><code>import json
 import hashlib
 import uuid
 import time
@@ -331,7 +409,7 @@ def update_license(private_key_pem, key_id, license_data, api_url, expiration_mi
     Args:
         private_key_pem (str): PEM-encoded private key
         key_id (str): Key ID (kid) provided by Xima
-        license_data (dict): License payload (without JTI/exp)
+        license_data (dict): License payload
         api_url (str): API endpoint URL
         expiration_minutes (int): Minutes until expiration (default: 30, max: 30)
 
@@ -412,179 +490,7 @@ def update_license(private_key_pem, key_id, license_data, api_url, expiration_mi
         return response.json()
     else:
         raise Exception(f"API Error ({response.status_code}): {response.text}")
-
-# Example usage
-if __name__ == "__main__":
-    # Your private key loaded from secure storage
-    with open('private_key.pem', 'r') as f:
-        private_key_pem = f.read()
-
-    # Key ID provided by Xima after CSR process
-    key_id = "f76bd221-8dda-4f49-a004-3545bc8b7b67"
-
-    # License data to update (no JTI or exp here)
-    license_data = {
-        "serial": "EXAMPLECUSTOMER1D57107A415DEE77F",
-        "digitalOnlySeats": 15,
-        "essentialSeats": 15,
-        "professionalSeats": 15,
-        "eliteSeats": 15,
-        "workforceOptimizationSeats": 15,
-        "workforceManagementSeats": 15,
-        "speechAnalyticsSeats": 6,
-        "dialerSeats": 6,
-        "additionalAiMessages": 6000
-    }
-
-    # API endpoint
-    api_url = "https://licensing.api.ximadev.cloud/v1/api/licensing/update"
-
-    try:
-        result = update_license(private_key_pem, key_id, license_data, api_url)
-        print("License update successful:")
-        print(json.dumps(result, indent=2))
-    except Exception as e:
-        print(f"Error: {str(e)}")
 </code></pre>
-            </div>
-        </div>
-    </div>
-
-    <div class="mb-12">
-        <h2 class="text-2xl font-bold text-gray-900 mb-4">Complete Code Example</h2>
-        <p class="text-gray-700 mb-4">
-            Here's a complete Python example that puts everything together into a reusable function.
-        </p>
-
-        <div class="code-block">
-        <pre class="line-numbers language-python"><code>import json
-import hashlib
-import uuid
-import time
-import base64
-import requests
-from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.serialization import load_pem_private_key
-
-def update_license(private_key_pem, key_id, license_data, api_url, expiration_minutes=30):
-    """
-    Update license using the Xima CCaaS API with JWT authentication
-
-    Args:
-        private_key_pem (str): PEM-encoded private key
-        key_id (str): Key ID (kid) provided by Xima
-        license_data (dict): License payload (without JTI/exp, will be added)
-        api_url (str): API endpoint URL
-        expiration_minutes (int): Minutes until expiration (default: 30, max: 30)
-
-    Returns:
-        dict: API response data
-    """
-    # Load private key
-    private_key = load_pem_private_key(
-        private_key_pem.encode('utf-8'),
-        password=None
-    )
-
-    # Ensure expiration is within limits
-    expiration_minutes = min(expiration_minutes, 30)
-
-    # Calculate expiration time
-    current_time = int(time.time())
-    expiration_time = current_time + (expiration_minutes * 60)
-
-    # Step 1: Add JTI and expiration to the license payload
-    license_data_with_auth = license_data.copy()
-    license_data_with_auth["jti"] = str(uuid.uuid4())
-    license_data_with_auth["exp"] = expiration_time
-
-    # Step 2: Serialize payload with specific parameters
-    payload_string = json.dumps(license_data_with_auth, sort_keys=False, separators=(',', ':')).encode('utf-8')
-    payload_hash = hashlib.sha256(payload_string).hexdigest()
-
-    # Step 3: Base64URL encode function
-    def base64url_encode(data):
-        return base64.urlsafe_b64encode(data).rstrip(b'=').decode('utf-8')
-
-    # Step 4: Create JWT header and payload
-    jwt_header = {
-        "alg": "RS256",
-        "typ": "JWT",
-        "kid": key_id
-    }
-
-    # Simplified JWT payload - only contains the hash
-    jwt_payload = {
-        "payload_hash": payload_hash
-    }
-
-    # Step 5: Encode header and payload
-    header_encoded = base64url_encode(json.dumps(jwt_header).encode('utf-8'))
-    payload_encoded = base64url_encode(json.dumps(jwt_payload).encode('utf-8'))
-
-    # Step 6: Sign the JWT
-    message = f"{header_encoded}.{payload_encoded}".encode('utf-8')
-    signature = private_key.sign(
-        message,
-        padding.PKCS1v15(),
-        hashes.SHA256()
-    )
-    signature_encoded = base64url_encode(signature)
-
-    # Step 7: Build complete JWT
-    jwt = f"{header_encoded}.{payload_encoded}.{signature_encoded}"
-
-    # Step 8: Send authenticated request
-    headers = {
-        "Authorization": f"Bearer {jwt}",
-        "Content-Type": "application/json"
-    }
-
-    response = requests.post(
-        api_url,
-        headers=headers,
-        data=payload_string
-    )
-
-    # Step 9: Handle response
-    if response.status_code == 200:
-        return response.json()
-    else:
-        raise Exception(f"API Error ({response.status_code}): {response.text}")
-
-# Example usage
-if __name__ == "__main__":
-    # Your private key loaded from secure storage
-    with open('private_key.pem', 'r') as f:
-        private_key_pem = f.read()
-
-    # Key ID provided by Xima after CSR process
-    key_id = "f76bd221-8dda-4f49-a004-3545bc8b7b67"
-
-    # License data to update
-    license_data = {
-        "serial": "EXAMPLECUSTOMER1D57107A415DEE77F",
-        "digitalOnlySeats": 15,
-        "essentialSeats": 15,
-        "professionalSeats": 15,
-        "eliteSeats": 15,
-        "workforceOptimizationSeats": 15,
-        "workforceManagementSeats": 15,
-        "speechAnalyticsSeats": 6,
-        "dialerSeats": 6,
-        "additionalAiMessages": 6000
-    }
-
-    # API endpoint
-    api_url = "https://licensing.api.ximadev.cloud/v1/api/licensing/update"
-
-    try:
-        result = update_license(private_key_pem, key_id, license_data, api_url)
-        print("License update successful:")
-        print(json.dumps(result, indent=2))
-    except Exception as e:
-        print(f"Error: {str(e)}")</code></pre>
         </div>
     </div>
 
