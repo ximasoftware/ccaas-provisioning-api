@@ -1,235 +1,236 @@
 # paths/licensing.yaml
-update:
-  post:
-    tags:
-      - License Management
-    summary: Update license seats and features
-    description: |
-      Updates the number of seats for different license tiers and features for a customer.
-      Requires JWT authentication with a payload hash of the request body.
+# The 'update:' key has been REMOVED from here.
+# 'post:' is now at the root level of this file.
+post:
+  tags:
+    - License Management
+  summary: Update license seats and features
+  description: |
+    Updates the number of seats for different license tiers and features for a customer.
+    Requires JWT authentication with a payload hash of the request body.
 
-      **Restrictions:**
+    **Restrictions:**
 
-      * Seat quantities (`digitalOnlySeats`, `essentialSeats`, etc.) must be integers. See the schema for minimum values.
-      * `workforceOptimizationSeats` and `workforceManagementSeats` have a minimum value of 10.
-      * `speechAnalyticsSeats` and `dialerSeats` have a minimum value of 5.
-      * `additionalAiMessages` is the number of additional AI messages and requires at least one `eliteSeats`.
-      * If SIP registration is required, include the optional sipCredentials object with the following properties: username, password, domain, proxy (optional), register, authUser (optional), outboundProxy (optional).
+    * Seat quantities (`digitalOnlySeats`, `essentialSeats`, etc.) must be integers. See the schema for minimum values.
+    * `workforceOptimizationSeats` and `workforceManagementSeats` have a minimum value of 10.
+    * `speechAnalyticsSeats` and `dialerSeats` have a minimum value of 5.
+    * `additionalAiMessages` is the number of additional AI messages and requires at least one `eliteSeats`.
+    * If SIP registration is required, include the optional sipCredentials object with the following properties: username, password, domain, proxy (optional), register, authUser (optional), outboundProxy (optional).
 
-      **Authentication Requirements**
+    **Authentication Requirements**
 
-      Each request must include:
-      * A JWT with the following in its payload:
-        * A payload hash of the request body
-        * A unique `jti` (JWT ID) - never reuse IDs
-        * An `exp` (expiration) timestamp - max 30 minutes in the future
+    Each request must include:
+    * A JWT with the following in its payload:
+      * A payload hash of the request body
+      * A unique `jti` (JWT ID) - never reuse IDs
+      * An `exp` (expiration) timestamp - max 30 minutes in the future
 
-      **Signature Generation**
+    **Signature Generation**
 
-      To ensure data integrity, the request body must be signed.
+    To ensure data integrity, the request body must be signed.
 
-      1.  **Request Body Preparation:**
-          * Prepare your license update request properties
-      2.  **JSON Serialization:**
-          * Serialize the JSON request body using `json.dumps` (or an equivalent function in your programming language) with the following parameters:
-              * `sort_keys=False` (to preserve property order)
-              * `separators=(',', ':')` (to minimize whitespace)
-          * This will produce a compact JSON string with no unnecessary whitespace.
-      3.  **UTF-8 Encoding:** Encode the resulting JSON string as UTF-8.
-      4.  **Hashing:** Calculate the SHA-256 hash of the UTF-8 encoded JSON string.
-      5.  Include the resulting hash in the `payload_hash` claim of your JWT along with `jti` and `exp` claims.
+    1.  **Request Body Preparation:**
+        * Prepare your license update request properties
+    2.  **JSON Serialization:**
+        * Serialize the JSON request body using `json.dumps` (or an equivalent function in your programming language) with the following parameters:
+            * `sort_keys=False` (to preserve property order)
+            * `separators=(',', ':')` (to minimize whitespace)
+        * This will produce a compact JSON string with no unnecessary whitespace.
+    3.  **UTF-8 Encoding:** Encode the resulting JSON string as UTF-8.
+    4.  **Hashing:** Calculate the SHA-256 hash of the UTF-8 encoded JSON string.
+    5.  Include the resulting hash in the `payload_hash` claim of your JWT along with `jti` and `exp` claims.
 
-      **Example (Python)**
+    **Example (Python)**
 
-      ```python
-      import json
-      import hashlib
-      import uuid
-      import time
+    ```python
+    import json
+    import hashlib
+    import uuid
+    import time
 
-      # License update payload WITHOUT jti or exp
-      payload = {
-          "ccId": {
-              "resellerId": "EXAMPLERESELLERID",
-              "divisionId": "EXAMPLEDIVISIONID"
-          },
-          "digitalOnlySeats": 10,
-          "essentialSeats": 10,
-          "professionalSeats": 10,
-          "eliteSeats": 10,
-          "workforceOptimizationSeats": 10,
-          "workforceManagementSeats": 10,
-          "speechAnalyticsSeats": 5,
-          "dialerSeats": 5,
-          "additionalAiMessages": 5000,
-          "aiMessaging": {
-              "additionalMessageBundles": 5
-          },
-          "aiAudioServices": {
-              "additionalHours": 20
-          },
-          "ehrEmrIntegrationSeats": 10,
-          "sipCredentials": {
-              "username": "user123",
-              "password": "secret",
-              "domain": "sip.example.com",
-              "proxy": "proxy.example.com",
-              "register": true,
-              "authUser": "authuser123",
-              "outboundProxy": "outbound.example.com"
-          }
-      }
+    # License update payload WITHOUT jti or exp
+    payload = {
+        "ccId": {
+            "resellerId": "EXAMPLERESELLERID",
+            "divisionId": "EXAMPLEDIVISIONID"
+        },
+        "digitalOnlySeats": 10,
+        "essentialSeats": 10,
+        "professionalSeats": 10,
+        "eliteSeats": 10,
+        "workforceOptimizationSeats": 10,
+        "workforceManagementSeats": 10,
+        "speechAnalyticsSeats": 5,
+        "dialerSeats": 5,
+        "additionalAiMessages": 5000,
+        "aiMessaging": {
+            "additionalMessageBundles": 5
+        },
+        "aiAudioServices": {
+            "additionalHours": 20
+        },
+        "ehrEmrIntegrationSeats": 10,
+        "sipCredentials": {
+            "username": "user123",
+            "password": "secret",
+            "domain": "sip.example.com",
+            "proxy": "proxy.example.com",
+            "register": true,
+            "authUser": "authuser123",
+            "outboundProxy": "outbound.example.com"
+        }
+    }
 
-      # Serialize the JSON (important: with specific parameters)
-      payload_string = json.dumps(payload, sort_keys=False, separators=(',', ':')).encode('utf-8')
+    # Serialize the JSON (important: with specific parameters)
+    payload_string = json.dumps(payload, sort_keys=False, separators=(',', ':')).encode('utf-8')
 
-      # Calculate the hash
-      payload_hash = hashlib.sha256(payload_string).hexdigest()
+    # Calculate the hash
+    payload_hash = hashlib.sha256(payload_string).hexdigest()
 
-      # Current time and expiration (30 minutes in the future)
-      current_time = int(time.time())
-      expiration_time = current_time + (30 * 60)
+    # Current time and expiration (30 minutes in the future)
+    current_time = int(time.time())
+    expiration_time = current_time + (30 * 60)
 
-      # Create JWT payload with security claims
-      jwt_payload = {
-          "payload_hash": payload_hash,
-          "jti": str(uuid.uuid4()),  # Unique ID for this request
-          "exp": expiration_time     # Expiration timestamp
-      }
+    # Create JWT payload with security claims
+    jwt_payload = {
+        "payload_hash": payload_hash,
+        "jti": str(uuid.uuid4()),  # Unique ID for this request
+        "exp": expiration_time     # Expiration timestamp
+    }
 
-      # ... (Continue with JWT creation and signing)
-      ```
+    # ... (Continue with JWT creation and signing)
+    ```
 
-      **Important:**
-      * The server will perform the same JSON serialization to normalize the payload before verifying the signature.
-      * Adhering to the specified serialization parameters is crucial for successful signature verification.
-      * The server tracks used JTIs until their expiration to prevent replay attacks.
+    **Important:**
+    * The server will perform the same JSON serialization to normalize the payload before verifying the signature.
+    * Adhering to the specified serialization parameters is crucial for successful signature verification.
+    * The server tracks used JTIs until their expiration to prevent replay attacks.
 
-      **Note:**
-      * Professional and Elite seats include a base number of AI messages and AI audio hours per agent. The aiMessaging.additionalMessageBundles and aiAudioServices.additionalHours fields are for purchasing additional capacity beyond the included base. Each message bundle = 1000 messages.
-    security:
-      - bearerAuth: []
-    requestBody:
-      required: true
+    **Note:**
+    * Professional and Elite seats include a base number of AI messages and AI audio hours per agent. The aiMessaging.additionalMessageBundles and aiAudioServices.additionalHours fields are for purchasing additional capacity beyond the included base. Each message bundle = 1000 messages.
+  security:
+    - bearerAuth: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../components/schemas.yaml#/LicenseUpdateRequest'
+        examples:
+          defaultExample: #
+            value:
+              ccId:
+                resellerId: EXAMPLERESELLERID
+                divisionId: EXAMPLEDIVISIONID
+              digitalOnlySeats: 10
+              essentialSeats: 10
+              professionalSeats: 10
+              eliteSeats: 10
+              workforceOptimizationSeats: 10
+              workforceManagementSeats: 10
+              speechAnalyticsSeats: 5
+              dialerSeats: 5
+              additionalAiMessages: 5000
+              aiMessaging:
+                additionalMessageBundles: 5
+              aiAudioServices:
+                additionalHours: 20
+              ehrEmrIntegrationSeats: 10
+              sipCredentials:
+                username: user123
+                password: secret
+                domain: sip.example.com
+                proxy: proxy.example.com
+                register: true
+                authUser: authuser123
+                outboundProxy: outbound.example.com
+  responses:
+    '200':
+      description: License updated successfully
       content:
         application/json:
           schema:
-            $ref: '../components/schemas.yaml#/LicenseUpdateRequest'
+            $ref: '../components/schemas.yaml#/LicenseUpdateResponse'
           examples:
-            defaultExample:
+            successResponse: #
               value:
                 ccId:
                   resellerId: EXAMPLERESELLERID
                   divisionId: EXAMPLEDIVISIONID
-                digitalOnlySeats: 10
-                essentialSeats: 10
-                professionalSeats: 10
-                eliteSeats: 10
-                workforceOptimizationSeats: 10
-                workforceManagementSeats: 10
-                speechAnalyticsSeats: 5
-                dialerSeats: 5
-                additionalAiMessages: 5000
-                aiMessaging:
-                  additionalMessageBundles: 5
-                aiAudioServices:
-                  additionalHours: 20
-                ehrEmrIntegrationSeats: 10
-                sipCredentials:
-                  username: user123
-                  password: secret
-                  domain: sip.example.com
-                  proxy: proxy.example.com
-                  register: true
-                  authUser: authuser123
-                  outboundProxy: outbound.example.com
-    responses:
-      '200':
-        description: License updated successfully
-        content:
-          application/json:
-            schema:
-              $ref: '../components/schemas.yaml#/LicenseUpdateResponse'
-            examples:
-              successResponse:
-                value:
-                  ccId:
-                    resellerId: EXAMPLERESELLERID
-                    divisionId: EXAMPLEDIVISIONID
-                  changes:
-                    digitalOnlySeats:
-                      oldValue: 10
-                      newValue: 15
-                    eliteSeats:
+                changes:
+                  digitalOnlySeats:
+                    oldValue: 10
+                    newValue: 15
+                  eliteSeats:
+                    oldValue: 10
+                    newValue: 20
+                  speechAnalyticsSeats:
+                    oldValue: 5
+                    newValue: 10
+                  additionalAiMessages:
+                    oldValue: 5000
+                    newValue: 10000
+                  aiMessaging:
+                    additionalMessageBundles:
+                      oldValue: 3
+                      newValue: 5
+                  aiAudioServices:
+                    additionalHours:
                       oldValue: 10
                       newValue: 20
-                    speechAnalyticsSeats:
-                      oldValue: 5
-                      newValue: 10
-                    additionalAiMessages:
-                      oldValue: 5000
-                      newValue: 10000
-                    aiMessaging:
-                      additionalMessageBundles:
-                        oldValue: 3
-                        newValue: 5
-                    aiAudioServices:
-                      additionalHours:
-                        oldValue: 10
-                        newValue: 20
-                    ehrEmrIntegrationSeats:
-                      oldValue: 5
-                      newValue: 10
-                    sipCredentials:
-                      username: user123
-                      password: secret
-                      domain: sip.example.com
-                      proxy: proxy.example.com
-                      register: true
-                      authUser: authuser123
-                      outboundProxy: outbound.example.com
-      '400':
-        description: Bad request - Invalid parameters
-        content:
-          application/json:
-            schema:
-              $ref: '../components/schemas.yaml#/Error'
-            examples:
-              validationError:
-                value:
-                  code: VALIDATION_ERROR
-                  message: At least 5 speech analytics seats are required
-              invalidJti:
-                value:
-                  code: INVALID_JTI
-                  message: JTI must be a valid UUID v4 format
-              expiredToken:
-                value:
-                  code: EXPIRED_TOKEN
-                  message: Request has expired (exp timestamp is in the past)
-      '401':
-        description: Unauthorized - Invalid JWT
-        content:
-          application/json:
-            schema:
-              $ref: '../components/schemas.yaml#/Error'
-            examples:
-              invalidToken:
-                value:
-                  code: INVALID_TOKEN
-                  message: The JWT signature is invalid
-              duplicateJti:
-                value:
-                  code: DUPLICATE_JTI
-                  message: This JTI has already been used
-      '404':
-        description: Not found - Customer not found
-        content:
-          application/json:
-            schema:
-              $ref: '../components/schemas.yaml#/Error'
-            examples:
-              customerNotFound:
-                value:
-                  code: CUSTOMER_NOT_FOUND
-                  message: No customer found with the provided ccId
+                  ehrEmrIntegrationSeats:
+                    oldValue: 5
+                    newValue: 10
+                  sipCredentials:
+                    username: user123
+                    password: secret
+                    domain: sip.example.com
+                    proxy: proxy.example.com
+                    register: true
+                    authUser: authuser123
+                    outboundProxy: outbound.example.com
+    '400':
+      description: Bad request - Invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas.yaml#/Error'
+          examples:
+            validationError: #
+              value:
+                code: VALIDATION_ERROR
+                message: At least 5 speech analytics seats are required
+            invalidJti: #
+              value:
+                code: INVALID_JTI
+                message: JTI must be a valid UUID v4 format
+            expiredToken: #
+              value:
+                code: EXPIRED_TOKEN
+                message: Request has expired (exp timestamp is in the past)
+    '401':
+      description: Unauthorized - Invalid JWT
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas.yaml#/Error'
+          examples:
+            invalidToken: #
+              value:
+                code: INVALID_TOKEN
+                message: The JWT signature is invalid
+            duplicateJti: #
+              value:
+                code: DUPLICATE_JTI
+                message: This JTI has already been used
+    '404':
+      description: Not found - Customer not found
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas.yaml#/Error'
+          examples:
+            customerNotFound: #
+              value:
+                code: CUSTOMER_NOT_FOUND
+                message: No customer found with the provided ccId
