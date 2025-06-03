@@ -114,6 +114,44 @@ LicenseUpdateRequest:
       minimum: 0
       description: Number of EHR/EMR integration seats
       example: 10
+    sipCredentials:
+      type: object
+      description: |
+        SIP credentials for registering a SIP client to an upstream register trunk. Optional. Only include if SIP registration is required.
+      properties:
+        username:
+          type: string
+          description: SIP username for registration
+          example: "user123"
+        password:
+          type: string
+          description: SIP password for registration
+          example: "secret"
+        domain:
+          type: string
+          description: SIP domain/realm
+          example: "sip.example.com"
+        proxy:
+          type: string
+          description: SIP proxy server (optional)
+          example: "proxy.example.com"
+        register:
+          type: boolean
+          description: Whether to register this client
+          example: true
+        authUser:
+          type: string
+          description: Authentication username if different from username (optional)
+          example: "authuser123"
+        outboundProxy:
+          type: string
+          description: Outbound proxy server (optional)
+          example: "outbound.example.com"
+      required:
+        - username
+        - password
+        - domain
+        - register
   required:
     - ccId
     - digitalOnlySeats
@@ -181,6 +219,44 @@ LicenseUpdateResponse:
               $ref: '#/ChangeDetails'
         ehrEmrIntegrationSeats:
           $ref: '#/ChangeDetails'
+        sipCredentials:
+          type: object
+          description: |
+            SIP credentials for registering a SIP client to an upstream register trunk. Optional. Only include if SIP registration is required.
+          properties:
+            username:
+              type: string
+              description: SIP username for registration
+              example: "user123"
+            password:
+              type: string
+              description: SIP password for registration
+              example: "secret"
+            domain:
+              type: string
+              description: SIP domain/realm
+              example: "sip.example.com"
+            proxy:
+              type: string
+              description: SIP proxy server (optional)
+              example: "proxy.example.com"
+            register:
+              type: boolean
+              description: Whether to register this client
+              example: true
+            authUser:
+              type: string
+              description: Authentication username if different from username (optional)
+              example: "authuser123"
+            outboundProxy:
+              type: string
+              description: Outbound proxy server (optional)
+              example: "outbound.example.com"
+          required:
+            - username
+            - password
+            - domain
+            - register
   required:
     - ccId
     - changes

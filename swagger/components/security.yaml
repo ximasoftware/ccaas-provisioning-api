@@ -39,11 +39,20 @@ bearerAuth:
           "aiAudioServices": {
             "additionalHours": 20
           },
-          "ehrEmrIntegrationSeats": 10
+          "ehrEmrIntegrationSeats": 10,
+          "sipCredentials": {
+            "username": "user123",
+            "password": "secret",
+            "domain": "sip.example.com",
+            "proxy": "proxy.example.com",
+            "register": true,
+            "authUser": "authuser123",
+            "outboundProxy": "outbound.example.com"
+          }
         }
         ```
 
-        **Note:** Base AI messaging and audio services are included with professional and elite seats. The `aiMessaging.additionalMessageBundles` and `aiAudioServices.additionalHours` fields are for additional purchases.
+        **Note:** Base AI messaging and audio services are included with professional and elite seats. The `aiMessaging.additionalMessageBundles` and `aiAudioServices.additionalHours` fields are for additional purchases. The `sipCredentials` field is used for SIP (Session Initiation Protocol) configuration. It contains properties such as `username`, `password`, `domain`, `proxy`, `register`, `authUser`, and `outboundProxy` for setting up SIP communication.
 
     2.  **JSON Serialization:** Serialize the JSON request body using `json.dumps` (or an equivalent) with `sort_keys=False` and `separators=(',', ':')`.
     3.  **UTF-8 Encoding:** Encode the resulting JSON string as UTF-8.

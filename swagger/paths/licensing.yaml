@@ -14,6 +14,7 @@ update:
       * `workforceOptimizationSeats` and `workforceManagementSeats` have a minimum value of 10.
       * `speechAnalyticsSeats` and `dialerSeats` have a minimum value of 5.
       * `additionalAiMessages` is the number of additional AI messages and requires at least one `eliteSeats`.
+      * If SIP registration is required, include the optional sipCredentials object with the following properties: username, password, domain, proxy (optional), register, authUser (optional), outboundProxy (optional).
 
       **Authentication Requirements**
 
@@ -67,7 +68,16 @@ update:
           "aiAudioServices": {
               "additionalHours": 20
           },
-          "ehrEmrIntegrationSeats": 10
+          "ehrEmrIntegrationSeats": 10,
+          "sipCredentials": {
+              "username": "user123",
+              "password": "secret",
+              "domain": "sip.example.com",
+              "proxy": "proxy.example.com",
+              "register": true,
+              "authUser": "authuser123",
+              "outboundProxy": "outbound.example.com"
+          }
       }
 
       # Serialize the JSON (important: with specific parameters)
@@ -125,6 +135,14 @@ update:
                 aiAudioServices:
                   additionalHours: 20
                 ehrEmrIntegrationSeats: 10
+                sipCredentials:
+                  username: user123
+                  password: secret
+                  domain: sip.example.com
+                  proxy: proxy.example.com
+                  register: true
+                  authUser: authuser123
+                  outboundProxy: outbound.example.com
     responses:
       '200':
         description: License updated successfully
@@ -162,6 +180,14 @@ update:
                     ehrEmrIntegrationSeats:
                       oldValue: 5
                       newValue: 10
+                    sipCredentials:
+                      username: user123
+                      password: secret
+                      domain: sip.example.com
+                      proxy: proxy.example.com
+                      register: true
+                      authUser: authuser123
+                      outboundProxy: outbound.example.com
       '400':
         description: Bad request - Invalid parameters
         content:
