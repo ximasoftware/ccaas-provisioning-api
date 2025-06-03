@@ -183,6 +183,32 @@
             </div>
         </div>
 
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4 text-center">Example Python Request</h2>
+            <pre><code>import requests
+
+url = "https://api.xima.cloud/v1/licensing"
+payload = {
+    "ccId": {
+        "resellerId": "reseller-123",
+        "divisionId": "division-456"
+    },
+    "sipCredentials": {
+        "username": "sipuser",
+        "password": "sippass",
+        "domain": "sip.provider.com",
+        "port": 5061,
+        "transport": "tls"
+    },
+    "essentialSeats": 10,
+    # ...other seat fields...
+}
+headers = {"Authorization": "Bearer <token>", "Content-Type": "application/json"}
+response = requests.post(url, json=payload, headers=headers)
+print(response.json())
+</code></pre>
+        </div>
+
         <div class="text-center mt-12">
             <h2 class="text-2xl font-bold text-gray-900 mb-4">Need More Information?</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">

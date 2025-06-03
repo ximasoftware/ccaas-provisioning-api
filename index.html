@@ -161,6 +161,16 @@
                 </div>
             </div>
         </div>
+
+        <div class="max-w-2xl mx-auto mt-8 p-6 bg-white rounded shadow border border-gray-200">
+            <h2 class="text-xl font-semibold mb-2 text-xima-blue">API Update: New Licensing Schema</h2>
+            <ul class="list-disc pl-6 text-gray-700 text-sm">
+                <li>Endpoint is now <code>POST /v1/licensing</code> (upsert: create or update a contact center).</li>
+                <li><code>serial</code> has been removed. Use the new <code>ccId</code> object with <code>resellerId</code> and <code>divisionId</code> (customer partitionId) instead.</li>
+                <li>Optional <code>sipCredentials</code> object allows you to provide all information needed to register a SIP client to an upstream trunk.</li>
+                <li>See API Reference and Code Examples for the new request schema and usage.</li>
+            </ul>
+        </div>
     </div>
 </main>
 
