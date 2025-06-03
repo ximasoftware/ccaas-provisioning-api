@@ -7,7 +7,7 @@ info:
 
     **Important Security Note:**
 
-    The `/v1/licensing/update` endpoint requires strict adherence to payload ordering and signature generation procedures.  See the endpoint documentation for details.
+    The `/v1/licensing` endpoint requires strict adherence to payload ordering and signature generation procedures.  See the endpoint documentation for details.
   version: 1.0.0
 tags:
   - name: License Management
@@ -31,5 +31,5 @@ components:
 
 # Paths are referenced from external files
 paths:
-  /licensing/update:
-    $ref: './paths/licensing.yaml#/update'
+  /licensing:
+    $ref: './paths/licensing.yaml'

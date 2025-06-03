@@ -208,38 +208,26 @@
         <h2 class="text-2xl font-bold text-gray-900 mb-4">Authentication Process</h2>
 
         <div class="auth-flow">
-            <!-- Step 1: Updated to use ccId, sipCredentials, aiMessaging, aiAudioServices, and ehrEmrIntegrationSeats objects -->
+            <!-- Step 1: Updated to use ccId, aiMessaging, aiAudioServices, and ehrEmrIntegrationSeats objects -->
             <div class="auth-step">
                 <div class="auth-number gradient-blue text-white">1</div>
                 <div class="auth-content">
                     <h3 class="text-lg font-medium text-gray-900 mb-2">Prepare License Payload</h3>
                     <p class="text-gray-700 mb-2">
-                        Create a JSON object containing the license parameters you want to update, including optional SIP credentials, AI messaging, AI audio services, and EHR/EMR integration seats.
+                        Create a JSON object containing the license parameters you want to update, including optional AI messaging, AI audio services, and EHR/EMR integration seats.
                     </p>
                     <div class="code-block">
 <pre class="line-numbers language-python"><code>
-# Create the license payload with ccId, sipCredentials, aiMessaging, aiAudioServices, and ehrEmrIntegrationSeats objects
+# Create the license payload with ccId, aiMessaging, aiAudioServices, and ehrEmrIntegrationSeats objects
 license_payload = {
     "ccId": {
         "resellerId": "EXAMPLERESELLERID",
         "divisionId": "EXAMPLEDIVISIONID"
     },
-    "sipCredentials": {
-        "username": "sipuser",
-        "password": "sippass",
-        "domain": "sip.provider.com",
-        "port": 5061,
-        "authUser": "authuser123",
-        "transport": "tls",
-        "outboundProxy": "proxy.provider.com",
-        "register": True
-    },
     "aiMessaging": {
-        "tier": "premium",  # 'standard' = 2 KB, 'premium' = 5 KB
-        "bundles": 5         # 5 x 1000 = 5000 messages
+        "additionalMessageBundles": 5
     },
     "aiAudioServices": {
-        "seatLicenses": 10,
         "additionalHours": 20
     },
     "ehrEmrIntegrationSeats": 10,
@@ -377,7 +365,7 @@ jwt = f"{header_encoded}.{payload_encoded}.{signature_encoded}"</code></pre>
 <pre class="line-numbers language-python"><code>import requests
 
 # API endpoint
-api_url = "https://licensing.api.ximadev.cloud/v1/api/licensing/update"
+api_url = "https://licensing.api.ximadev.cloud/v1/api/licensing"
 
 # Headers with JWT
 headers = {
@@ -410,24 +398,24 @@ else:
     <div class="mb-12">
         <h2 class="text-2xl font-bold text-gray-900 mb-4">AI Messaging & AI Audio Services</h2>
         <p class="text-gray-700 mb-4">
-            <strong>AI Messaging:</strong> Configure billable AI messaging by specifying a <code>tier</code> and the number of <code>bundles</code> (each bundle = 1000 messages).<br>
-            - <code>tier: 'standard'</code> provides 2 knowledge bases.<br>
-            - <code>tier: 'premium'</code> provides 5 knowledge bases.<br>
-            - <code>bundles</code> is the number of 1000-message increments (e.g., 5 = 5000 messages).
-        </p>
-        <p class="text-gray-700 mb-4">
-            <strong>AI Audio Services:</strong> Configure by specifying <code>seatLicenses</code> (number of AI Audio Services seat licenses) and <code>additionalHours</code> (number of additional AI transcription hours).
+            <strong>AI Messaging:</strong> Configure billable AI messaging by specifying the number of <code>additionalMessageBundles</code> (each bundle = 1000 messages).<br>
+            <strong>AI Audio Services:</strong> Configure by specifying <code>additionalHours</code> (number of additional AI transcription hours).
         </p>
         <p class="text-gray-700 mb-4">
             <strong>EHR/EMR Integration:</strong> Use <code>ehrEmrIntegrationSeats</code> to specify the number of agent users with EHR/EMR integration.
         </p>
+        <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mt-2">
+          <p>Professional and Elite seats include a base number of AI messages and AI audio hours per agent. The <code>aiMessaging.additionalMessageBundles</code> and <code>aiAudioServices.additionalHours</code> fields are for purchasing additional capacity beyond the included base. Each message bundle = 1000 messages.</p>
+        </div>
         <pre class="line-numbers language-json"><code>{
+  "ccId": {
+    "resellerId": "EXAMPLERESELLERID",
+    "divisionId": "EXAMPLEDIVISIONID"
+  },
   "aiMessaging": {
-    "tier": "premium",
-    "bundles": 5
+    "additionalMessageBundles": 5
   },
   "aiAudioServices": {
-    "seatLicenses": 10,
     "additionalHours": 20
   },
   "ehrEmrIntegrationSeats": 10

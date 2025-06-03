@@ -25,10 +25,21 @@ Error:
 LicenseUpdateRequest:
   type: object
   properties:
-    serial:
-      type: string
-      description: Unique customer serial number
-      example: EXAMPLECUSTOMER1D57107A415DEE77F
+    ccId:
+      type: object
+      description: Customer identifiers
+      properties:
+        resellerId:
+          type: string
+          description: Reseller identifier
+          example: EXAMPLERESELLERID
+        divisionId:
+          type: string
+          description: Division identifier
+          example: EXAMPLEDIVISIONID
+      required:
+        - resellerId
+        - divisionId
     digitalOnlySeats:
       type: integer
       minimum: 0
@@ -74,16 +85,68 @@ LicenseUpdateRequest:
       minimum: 0
       description: Additional AI messages. Requires at least one Elite seat.
       example: 5000
+    aiMessaging:
+      type: object
+      description: |
+        AI Messaging options. Professional and Elite seats include a base number of AI messages per agent. Use additionalMessageBundles to purchase more (each bundle = 1000 messages).
+      properties:
+        additionalMessageBundles:
+          type: integer
+          minimum: 0
+          description: Number of additional AI message bundles (each bundle = 1000 messages)
+          example: 5
+      required:
+        - additionalMessageBundles
+    aiAudioServices:
+      type: object
+      description: |
+        AI Audio Services options. Professional and Elite seats include a base number of AI audio hours per agent. Use additionalHours to purchase more.
+      properties:
+        additionalHours:
+          type: integer
+          minimum: 0
+          description: Number of additional AI audio hours
+          example: 20
+      required:
+        - additionalHours
+    ehrEmrIntegrationSeats:
+      type: integer
+      minimum: 0
+      description: Number of EHR/EMR integration seats
+      example: 10
   required:
-    - serial
+    - ccId
+    - digitalOnlySeats
+    - essentialSeats
+    - professionalSeats
+    - eliteSeats
+    - workforceOptimizationSeats
+    - workforceManagementSeats
+    - speechAnalyticsSeats
+    - dialerSeats
+    - additionalAiMessages
+    - aiMessaging
+    - aiAudioServices
+    - ehrEmrIntegrationSeats
 
 LicenseUpdateResponse:
   type: object
   properties:
-    serial:
-      type: string
-      description: Unique customer serial number.
-      example: EXAMPLECUSTOMER1D57107A415DEE77F
+    ccId:
+      type: object
+      description: Customer identifiers
+      properties:
+        resellerId:
+          type: string
+          description: Reseller identifier
+          example: EXAMPLERESELLERID
+        divisionId:
+          type: string
+          description: Division identifier
+          example: EXAMPLEDIVISIONID
+      required:
+        - resellerId
+        - divisionId
     changes:
       type: object
       description: Details of the changes made to the license.
@@ -106,8 +169,21 @@ LicenseUpdateResponse:
           $ref: '#/ChangeDetails'
         additionalAiMessages:
           $ref: '#/ChangeDetails'
+        aiMessaging:
+          type: object
+          properties:
+            additionalMessageBundles:
+              $ref: '#/ChangeDetails'
+        aiAudioServices:
+          type: object
+          properties:
+            additionalHours:
+              $ref: '#/ChangeDetails'
+        ehrEmrIntegrationSeats:
+          $ref: '#/ChangeDetails'
   required:
-    - serial
+    - ccId
+    - changes
 
 ChangeDetails:  # New reusable schema for change details
   type: object

@@ -62,11 +62,9 @@ update:
           "dialerSeats": 5,
           "additionalAiMessages": 5000,
           "aiMessaging": {
-              "tier": "premium",
               "additionalMessageBundles": 5
           },
           "aiAudioServices": {
-              "seatLicenses": 10,
               "additionalHours": 20
           },
           "ehrEmrIntegrationSeats": 10
@@ -96,6 +94,9 @@ update:
       * The server will perform the same JSON serialization to normalize the payload before verifying the signature.
       * Adhering to the specified serialization parameters is crucial for successful signature verification.
       * The server tracks used JTIs until their expiration to prevent replay attacks.
+
+      **Note:**
+      * Professional and Elite seats include a base number of AI messages and AI audio hours per agent. The aiMessaging.additionalMessageBundles and aiAudioServices.additionalHours fields are for purchasing additional capacity beyond the included base. Each message bundle = 1000 messages.
     security:
       - bearerAuth: []
     requestBody:
@@ -120,10 +121,8 @@ update:
                 dialerSeats: 5
                 additionalAiMessages: 5000
                 aiMessaging:
-                  tier: premium
                   additionalMessageBundles: 5
                 aiAudioServices:
-                  seatLicenses: 10
                   additionalHours: 20
                 ehrEmrIntegrationSeats: 10
     responses:
@@ -153,16 +152,10 @@ update:
                       oldValue: 5000
                       newValue: 10000
                     aiMessaging:
-                      tier:
-                        oldValue: "standard"
-                        newValue: "premium"
                       additionalMessageBundles:
                         oldValue: 3
                         newValue: 5
                     aiAudioServices:
-                      seatLicenses:
-                        oldValue: 5
-                        newValue: 10
                       additionalHours:
                         oldValue: 10
                         newValue: 20
@@ -204,7 +197,7 @@ update:
                   code: DUPLICATE_JTI
                   message: This JTI has already been used
       '404':
-        description: Not found - Customer serial not found
+        description: Not found - Customer not found
         content:
           application/json:
             schema:
