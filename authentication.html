@@ -208,19 +208,41 @@
         <h2 class="text-2xl font-bold text-gray-900 mb-4">Authentication Process</h2>
 
         <div class="auth-flow">
-            <!-- Step 1: Updated to remove JTI and expiration from license payload -->
+            <!-- Step 1: Updated to use ccId, sipCredentials, aiMessaging, aiAudioServices, and ehrEmrIntegrationSeats objects -->
             <div class="auth-step">
                 <div class="auth-number gradient-blue text-white">1</div>
                 <div class="auth-content">
                     <h3 class="text-lg font-medium text-gray-900 mb-2">Prepare License Payload</h3>
                     <p class="text-gray-700 mb-2">
-                        Create a JSON object containing the license parameters you want to update.
+                        Create a JSON object containing the license parameters you want to update, including optional SIP credentials, AI messaging, AI audio services, and EHR/EMR integration seats.
                     </p>
                     <div class="code-block">
 <pre class="line-numbers language-python"><code>
-# Create the license payload without JTI or expiration time
+# Create the license payload with ccId, sipCredentials, aiMessaging, aiAudioServices, and ehrEmrIntegrationSeats objects
 license_payload = {
-    "serial": "EXAMPLECUSTOMER1D57107A415DEE77F",
+    "ccId": {
+        "resellerId": "EXAMPLERESELLERID",
+        "divisionId": "EXAMPLEDIVISIONID"
+    },
+    "sipCredentials": {
+        "username": "sipuser",
+        "password": "sippass",
+        "domain": "sip.provider.com",
+        "port": 5061,
+        "authUser": "authuser123",
+        "transport": "tls",
+        "outboundProxy": "proxy.provider.com",
+        "register": True
+    },
+    "aiMessaging": {
+        "tier": "premium",  # 'standard' = 2 KB, 'premium' = 5 KB
+        "bundles": 5         # 5 x 1000 = 5000 messages
+    },
+    "aiAudioServices": {
+        "seatLicenses": 10,
+        "additionalHours": 20
+    },
+    "ehrEmrIntegrationSeats": 10,
     "digitalOnlySeats": 15,
     "essentialSeats": 15,
     "professionalSeats": 15,
@@ -383,6 +405,33 @@ else:
 
 
         </div>
+    </div>
+
+    <div class="mb-12">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">AI Messaging & AI Audio Services</h2>
+        <p class="text-gray-700 mb-4">
+            <strong>AI Messaging:</strong> Configure billable AI messaging by specifying a <code>tier</code> and the number of <code>bundles</code> (each bundle = 1000 messages).<br>
+            - <code>tier: 'standard'</code> provides 2 knowledge bases.<br>
+            - <code>tier: 'premium'</code> provides 5 knowledge bases.<br>
+            - <code>bundles</code> is the number of 1000-message increments (e.g., 5 = 5000 messages).
+        </p>
+        <p class="text-gray-700 mb-4">
+            <strong>AI Audio Services:</strong> Configure by specifying <code>seatLicenses</code> (number of AI Audio Services seat licenses) and <code>additionalHours</code> (number of additional AI transcription hours).
+        </p>
+        <p class="text-gray-700 mb-4">
+            <strong>EHR/EMR Integration:</strong> Use <code>ehrEmrIntegrationSeats</code> to specify the number of agent users with EHR/EMR integration.
+        </p>
+        <pre class="line-numbers language-json"><code>{
+  "aiMessaging": {
+    "tier": "premium",
+    "bundles": 5
+  },
+  "aiAudioServices": {
+    "seatLicenses": 10,
+    "additionalHours": 20
+  },
+  "ehrEmrIntegrationSeats": 10
+}</code></pre>
     </div>
 
     <div class="mb-12">

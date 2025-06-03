@@ -20,8 +20,28 @@ bearerAuth:
     1.  **Request Body Preparation:** Prepare your license update request body:
         ```json
         {
-          "serial": "EXAMPLECUSTOMER1D57107A415DEE77F",
-          // Other license properties
+          "ccId": {
+            "resellerId": "EXAMPLERESELLERID",
+            "divisionId": "EXAMPLEDIVISIONID"
+          },
+          "digitalOnlySeats": 10,
+          "essentialSeats": 10,
+          "professionalSeats": 10,
+          "eliteSeats": 10,
+          "workforceOptimizationSeats": 10,
+          "workforceManagementSeats": 10,
+          "speechAnalyticsSeats": 5,
+          "dialerSeats": 5,
+          "additionalAiMessages": 5000,
+          "aiMessaging": {
+            "tier": "premium",
+            "additionalMessageBundles": 5
+          },
+          "aiAudioServices": {
+            "seatLicenses": 10,
+            "additionalHours": 20
+          },
+          "ehrEmrIntegrationSeats": 10
         }
         ```
 
