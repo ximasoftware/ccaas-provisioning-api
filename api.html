@@ -125,50 +125,39 @@
       <h2 class="text-2xl font-bold text-gray-900 mb-4">Endpoint</h2>
       <pre><code>POST /v1/licensing</code></pre>
 
-      <h2 class="text-2xl font-bold text-gray-900 mb-4">Request Body</h2>
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">Request Body Example</h2>
       <pre><code>{
   "ccId": {
     "resellerId": "string",
     "divisionId": "string"
   },
   "sipCredentials": {
-    "username": "string",
-    "password": "string",
-    "domain": "string",
-    "port": 5061,
-    "authUser": "string",
-    "transport": "tls",
-    "outboundProxy": "proxy.provider.com",
-    "register": true
+    "username": "user123",
+    "password": "secret",
+    "domain": "sip.example.com",
+    "proxy": "proxy.example.com",
+    "register": true,
+    "authUser": "authuser123",
+    "outboundProxy": "outbound.example.com"
   },
+  "aiMessaging": {
+    "additionalMessageBundles": 5
+  },
+  "aiAudioServices": {
+    "additionalHours": 20
+  },
+  "ehrEmrIntegrationSeats": 10
   // ...other license seat fields...
 }
 </code></pre>
 
-      <h2 class="text-2xl font-bold text-gray-900 mb-4">AI Messaging & AI Audio Services</h2>
-      <p class="text-gray-700 mb-4">
-        <strong>AI Messaging:</strong> Configure billable AI messaging by specifying a <code>tier</code> and the number of <code>bundles</code> (each bundle = 1000 messages).<br>
-        - <code>tier: 'standard'</code> provides 2 knowledge bases.<br>
-        - <code>tier: 'premium'</code> provides 5 knowledge bases.<br>
-        - <code>bundles</code> is the number of 1000-message increments (e.g., 5 = 5000 messages).
-      </p>
-      <p class="text-gray-700 mb-4">
-        <strong>AI Audio Services:</strong> Configure by specifying <code>seatLicenses</code> (number of AI Audio Services seat licenses) and <code>additionalHours</code> (number of additional AI transcription hours).
-      </p>
-      <p class="text-gray-700 mb-4">
-        <strong>EHR/EMR Integration:</strong> Use <code>ehrEmrIntegrationSeats</code> to specify the number of agent users with EHR/EMR integration.
-      </p>
-      <pre class="line-numbers language-json"><code>{
-  "aiMessaging": {
-    "tier": "premium",
-    "bundles": 5
-  },
-  "aiAudioServices": {
-    "seatLicenses": 10,
-    "additionalHours": 20
-  },
-  "ehrEmrIntegrationSeats": 10
-}</code></pre>
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">Feature Notes</h2>
+      <ul class="list-disc pl-6 text-gray-700 mb-4">
+        <li><strong>AI Messaging:</strong> Professional and Elite seats include a base number of AI messages per agent. Use <code>aiMessaging.additionalMessageBundles</code> to purchase more (each bundle = 1000 messages).</li>
+        <li><strong>AI Audio Services:</strong> Professional and Elite seats include a base number of AI audio hours per agent. Use <code>aiAudioServices.additionalHours</code> to purchase more.</li>
+        <li><strong>SIP Credentials:</strong> If SIP registration is required, include the optional <code>sipCredentials</code> object with the following properties: <code>username</code>, <code>password</code>, <code>domain</code>, <code>proxy</code> (optional), <code>register</code>, <code>authUser</code> (optional), <code>outboundProxy</code> (optional).</li>
+        <li><strong>EHR/EMR Integration:</strong> Use <code>ehrEmrIntegrationSeats</code> to specify the number of agent users with EHR/EMR integration.</li>
+      </ul>
 
       <h2 class="text-2xl font-bold text-gray-900 mb-4">Next Steps</h2>
       <p class="text-gray-700 mb-4">
