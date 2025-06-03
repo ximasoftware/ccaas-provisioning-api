@@ -51,7 +51,7 @@ post:
     # License update payload WITHOUT jti or exp
     payload = {
         "ccId": {
-            "resellerId": "EXAMPLERESELLERID",
+            "id": "EXAMPLECUSTOMERID",
             "divisionId": "EXAMPLEDIVISIONID"
         },
         "digitalOnlySeats": 10,
@@ -120,7 +120,7 @@ post:
           defaultExample: #
             value:
               ccId:
-                resellerId: EXAMPLERESELLERID
+                id: EXAMPLECUSTOMERID
                 divisionId: EXAMPLEDIVISIONID
               digitalOnlySeats: 10
               essentialSeats: 10
@@ -155,7 +155,7 @@ post:
             successResponse: #
               value:
                 ccId:
-                  resellerId: EXAMPLERESELLERID
+                  id: EXAMPLECUSTOMERID
                   divisionId: EXAMPLEDIVISIONID
                 changes:
                   digitalOnlySeats:

@@ -21,7 +21,7 @@ bearerAuth:
         ```json
         {
           "ccId": {
-            "resellerId": "EXAMPLERESELLERID",
+            "id": "EXAMPLECUSTOMERID",
             "divisionId": "EXAMPLEDIVISIONID"
           },
           "digitalOnlySeats": 10,

@@ -29,16 +29,16 @@ LicenseUpdateRequest:
       type: object
       description: Customer identifiers
       properties:
-        resellerId:
+        id:
           type: string
-          description: Reseller identifier
-          example: EXAMPLERESELLERID
+          description: Customer identifier
+          example: EXAMPLECUSTOMERID
         divisionId:
           type: string
           description: Division identifier
           example: EXAMPLEDIVISIONID
       required:
-        - resellerId
+        - id
         - divisionId
     digitalOnlySeats:
       type: integer
@@ -174,16 +174,16 @@ LicenseUpdateResponse:
       type: object
       description: Customer identifiers
       properties:
-        resellerId:
+        id:
           type: string
-          description: Reseller identifier
-          example: EXAMPLERESELLERID
+          description: Customer identifier
+          example: EXAMPLECUSTOMERID
         divisionId:
           type: string
           description: Division identifier
           example: EXAMPLEDIVISIONID
       required:
-        - resellerId
+        - id
         - divisionId
     changes:
       type: object
