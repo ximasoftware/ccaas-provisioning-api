@@ -121,11 +121,13 @@
       <div id="swagger-ui"></div>
     </div>
 
-    <div class="mb-12">
-      <h2 class="text-2xl font-bold text-gray-900 mb-4">Endpoint</h2>
+    <!-- Custom API Documentation (moved below Swagger UI for compatibility) -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">Reference Examples & Feature Notes</h2>
+      <h3 class="text-xl font-bold text-gray-900 mb-2">Endpoint</h3>
       <pre><code>POST /v1/licensing</code></pre>
 
-      <h2 class="text-2xl font-bold text-gray-900 mb-4">Request Body Example</h2>
+      <h3 class="text-xl font-bold text-gray-900 mb-2">Request Body Example</h3>
       <pre><code>{
   "ccId": {
     "resellerId": "string",
@@ -151,67 +153,14 @@
 }
 </code></pre>
 
-      <h2 class="text-2xl font-bold text-gray-900 mb-4">Feature Notes</h2>
+      <h3 class="text-xl font-bold text-gray-900 mb-2">Feature Notes</h3>
       <ul class="list-disc pl-6 text-gray-700 mb-4">
         <li><strong>AI Messaging:</strong> Professional and Elite seats include a base number of AI messages per agent. Use <code>aiMessaging.additionalMessageBundles</code> to purchase more (each bundle = 1000 messages).</li>
         <li><strong>AI Audio Services:</strong> Professional and Elite seats include a base number of AI audio hours per agent. Use <code>aiAudioServices.additionalHours</code> to purchase more.</li>
         <li><strong>SIP Credentials:</strong> If SIP registration is required, include the optional <code>sipCredentials</code> object with the following properties: <code>username</code>, <code>password</code>, <code>domain</code>, <code>proxy</code> (optional), <code>register</code>, <code>authUser</code> (optional), <code>outboundProxy</code> (optional).</li>
         <li><strong>EHR/EMR Integration:</strong> Use <code>ehrEmrIntegrationSeats</code> to specify the number of agent users with EHR/EMR integration.</li>
       </ul>
-
-      <h2 class="text-2xl font-bold text-gray-900 mb-4">Next Steps</h2>
-      <p class="text-gray-700 mb-4">
-        Now that you've explored the API reference, you can learn more about:
-      </p>
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div class="bg-white shadow rounded-lg overflow-hidden">
-          <div class="px-4 py-6 sm:p-6">
-            <div class="flex items-center">
-              <svg class="h-6 w-6 text-xima-blue mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-              </svg>
-              <h3 class="text-lg font-medium text-gray-900">Authentication</h3>
-            </div>
-            <div class="mt-3">
-              <p class="text-gray-700">
-                Learn how to authenticate your requests using JWTs with payload hashing and anti-replay protection.
-              </p>
-              <div class="mt-4">
-                <a href="./authentication.html" class="inline-flex items-center font-medium text-xima-blue hover:underline">
-                  View Authentication Guide
-                  <svg class="ml-1 w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-                  </svg>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="bg-white shadow rounded-lg overflow-hidden">
-          <div class="px-4 py-6 sm:p-6">
-            <div class="flex items-center">
-              <svg class="h-6 w-6 text-xima-blue mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-              </svg>
-              <h3 class="text-lg font-medium text-gray-900">Code Examples</h3>
-            </div>
-            <div class="mt-3">
-              <p class="text-gray-700">
-                Try our interactive Colab notebook that guides you through the entire API implementation process.
-              </p>
-              <div class="mt-4">
-                <a href="./code-examples.html" class="inline-flex items-center font-medium text-xima-blue hover:underline">
-                  View Code Examples
-                  <svg class="ml-1 w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-                  </svg>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    </section>
   </div>
 </main>
 
