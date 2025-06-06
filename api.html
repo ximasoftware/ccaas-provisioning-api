@@ -121,46 +121,6 @@
       <div id="swagger-ui"></div>
     </div>
 
-    <!-- Custom API Documentation (moved below Swagger UI for compatibility) -->
-    <section class="mb-12">
-      <h2 class="text-2xl font-bold text-gray-900 mb-4">Reference Examples & Feature Notes</h2>
-      <h3 class="text-xl font-bold text-gray-900 mb-2">Endpoint</h3>
-      <pre><code>POST /v1/licensing</code></pre>
-
-      <h3 class="text-xl font-bold text-gray-900 mb-2">Request Body Example</h3>
-      <pre><code>{
-  "ccId": {
-    "id": "string",
-    "divisionId": "string"
-  },
-  "sipCredentials": {
-    "username": "user123",
-    "password": "secret",
-    "domain": "sip.example.com",
-    "proxy": "proxy.example.com",
-    "register": true,
-    "authUser": "authuser123",
-    "outboundProxy": "outbound.example.com"
-  },
-  "aiMessaging": {
-    "additionalMessageBundles": 5
-  },
-  "aiAudioServices": {
-    "additionalHours": 20
-  },
-  "ehrEmrIntegrationSeats": 10
-  // ...other license seat fields...
-}
-</code></pre>
-
-      <h3 class="text-xl font-bold text-gray-900 mb-2">Feature Notes</h3>
-      <ul class="list-disc pl-6 text-gray-700 mb-4">
-        <li><strong>AI Messaging:</strong> Professional and Elite seats include a base number of AI messages per agent. Use <code>aiMessaging.additionalMessageBundles</code> to purchase more (each bundle = 1000 messages).</li>
-        <li><strong>AI Audio Services:</strong> Professional and Elite seats include a base number of AI audio hours per agent. Use <code>aiAudioServices.additionalHours</code> to purchase more.</li>
-        <li><strong>SIP Credentials:</strong> If SIP registration is required, include the optional <code>sipCredentials</code> object with the following properties: <code>username</code>, <code>password</code>, <code>domain</code>, <code>proxy</code> (optional), <code>register</code>, <code>authUser</code> (optional), <code>outboundProxy</code> (optional).</li>
-        <li><strong>EHR/EMR Integration:</strong> Use <code>ehrEmrIntegrationSeats</code> to specify the number of agent users with EHR/EMR integration.</li>
-      </ul>
-    </section>
   </div>
 </main>
 
