@@ -1,5 +1,47 @@
 # Updated schemas.yaml
 # Data models for the API
+
+AiMessagingStandard:
+  type: object
+  description: |
+    Configuration for the Standard AI Messaging tier. 
+    Each bundle provides 5,000 AI messages and 2 knowledge bases. 
+    This tier cannot be combined with the Advanced tier.
+  properties:
+    standardBundles:
+      type: integer
+      minimum: 0
+      description: "Number of Standard AI Messaging bundles to purchase."
+      example: 5
+    advancedBundles:
+      type: integer
+      description: "Must be 0 when standardBundles is greater than 0."
+      example: 0
+      enum: [0] # Enforce that this must be 0
+  required:
+    - standardBundles
+    - advancedBundles
+
+AiMessagingAdvanced:
+  type: object
+  description: |
+    Configuration for the Advanced AI Messaging tier. 
+    Each bundle provides 5,000 AI messages and 5 knowledge bases, and includes support for 3rd party integrations (e.g., CRMs).
+    This tier cannot be combined with the Standard tier.
+  properties:
+    standardBundles:
+      type: integer
+      description: "Must be 0 when advancedBundles is greater than 0."
+      example: 0
+      enum: [0] # Enforce that this must be 0
+    advancedBundles:
+      type: integer
+      minimum: 0
+      description: "Number of Advanced AI Messaging bundles to purchase."
+      example: 3
+  required:
+    - standardBundles
+    - advancedBundles
 Error:
   type: object
   properties:
@@ -86,17 +128,14 @@ LicenseUpdateRequest:
       description: Additional AI messages. Requires at least one Elite seat.
       example: 5000
     aiMessaging:
-      type: object
       description: |
-        AI Messaging options. Professional and Elite seats include a base number of AI messages per agent. Use additionalMessageBundles to purchase more (each bundle = 1000 messages).
-      properties:
-        additionalMessageBundles:
-          type: integer
-          minimum: 0
-          description: Number of additional AI message bundles (each bundle = 1000 messages)
-          example: 5
-      required:
-        - additionalMessageBundles
+        Configuration for AI Messaging. Choose ONE of the following tiers: Standard or Advanced. They cannot be combined.
+        - An account with at least one Elite license automatically includes one (1) Standard bundle. This does not increase with more Elite seats.
+        - To get more messages, purchase additional Standard bundles.
+        - To get more than 2 knowledge bases, you MUST purchase the Advanced tier.
+      oneOf:
+        - $ref: '#/AiMessagingStandard'
+        - $ref: '#/AiMessagingAdvanced'
     aiAudioServices:
       type: object
       description: |
@@ -220,7 +259,9 @@ LicenseUpdateResponse:
           type: object
           description: Only included if aiMessaging was changed.
           properties:
-            additionalMessageBundles:
+            standardBundles:
+              $ref: '#/ChangeDetails'
+            advancedBundles:
               $ref: '#/ChangeDetails'
         aiAudioServices:
           type: object

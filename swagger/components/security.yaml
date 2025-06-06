@@ -34,7 +34,8 @@ bearerAuth:
           "dialerSeats": 5,
           "additionalAiMessages": 5000,
           "aiMessaging": {
-            "additionalMessageBundles": 5
+            "standardBundles": 5,
+            "advancedBundles": 0
           },
           "aiAudioServices": {
             "additionalHours": 20
@@ -52,7 +53,15 @@ bearerAuth:
         }
         ```
 
-        **Note:** Base AI messaging and audio services are included with professional and elite seats. The `aiMessaging.additionalMessageBundles` and `aiAudioServices.additionalHours` fields are for additional purchases. The `sipCredentials` field is used for SIP (Session Initiation Protocol) configuration. It contains properties such as `username`, `password`, `domain`, `proxy`, `register`, `authUser`, and `outboundProxy` for setting up SIP communication.
+        **Note:** Base AI messaging and audio services are included with professional and elite seats. 
+
+        **AI Messaging Tiers:**
+        - An account with at least one Elite license automatically includes one (1) Standard bundle (5,000 messages and 2 knowledge bases).
+        - Choose ONE of the AI Messaging tiers: Standard or Advanced. They cannot be combined.
+        - Standard tier (`standardBundles`): Each bundle provides 5,000 AI messages and 2 knowledge bases.
+        - Advanced tier (`advancedBundles`): Each bundle provides 5,000 AI messages and 5 knowledge bases, and includes support for 3rd party integrations.
+
+        The `aiAudioServices.additionalHours` field is for purchasing additional audio hours. The `sipCredentials` field is used for SIP (Session Initiation Protocol) configuration. It contains properties such as `username`, `password`, `domain`, `proxy`, `register`, `authUser`, and `outboundProxy` for setting up SIP communication.
 
     2.  **JSON Serialization:** Serialize the JSON request body using `json.dumps` (or an equivalent) with `sort_keys=False` and `separators=(',', ':')`.
     3.  **UTF-8 Encoding:** Encode the resulting JSON string as UTF-8.
