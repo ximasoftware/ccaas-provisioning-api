@@ -146,7 +146,7 @@ post:
                 outboundProxy: outbound.example.com
   responses:
     '200':
-      description: License updated successfully
+      description: License updated successfully. The response only includes fields that were changed as a result of the POST.
       content:
         application/json:
           schema:
@@ -182,13 +182,15 @@ post:
                     oldValue: 5
                     newValue: 10
                   sipCredentials:
-                    username: user123
-                    password: secret
-                    domain: sip.example.com
-                    proxy: proxy.example.com
-                    register: true
-                    authUser: authuser123
-                    outboundProxy: outbound.example.com
+                    username:
+                      oldValue: "user456"
+                      newValue: "user123"
+                    password:
+                      oldValue: "oldpassword"
+                      newValue: "secret"
+                    domain:
+                      oldValue: "old.example.com"
+                      newValue: "sip.example.com"
     '400':
       description: Bad request - Invalid parameters
       content:

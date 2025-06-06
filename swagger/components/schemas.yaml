@@ -187,76 +187,69 @@ LicenseUpdateResponse:
         - divisionId
     changes:
       type: object
-      description: Details of the changes made to the license.
+      description: Details of the changes made to the license. Only fields that were changed as a result of the POST are included in the response.
       properties:
         digitalOnlySeats:
           $ref: '#/ChangeDetails'
+          description: Only included if digitalOnlySeats was changed.
         essentialSeats:
           $ref: '#/ChangeDetails'
+          description: Only included if essentialSeats was changed.
         professionalSeats:
           $ref: '#/ChangeDetails'
+          description: Only included if professionalSeats was changed.
         eliteSeats:
           $ref: '#/ChangeDetails'
+          description: Only included if eliteSeats was changed.
         workforceOptimizationSeats:
           $ref: '#/ChangeDetails'
+          description: Only included if workforceOptimizationSeats was changed.
         workforceManagementSeats:
           $ref: '#/ChangeDetails'
+          description: Only included if workforceManagementSeats was changed.
         speechAnalyticsSeats:
           $ref: '#/ChangeDetails'
+          description: Only included if speechAnalyticsSeats was changed.
         dialerSeats:
           $ref: '#/ChangeDetails'
+          description: Only included if dialerSeats was changed.
         additionalAiMessages:
           $ref: '#/ChangeDetails'
+          description: Only included if additionalAiMessages was changed.
         aiMessaging:
           type: object
+          description: Only included if aiMessaging was changed.
           properties:
             additionalMessageBundles:
               $ref: '#/ChangeDetails'
         aiAudioServices:
           type: object
+          description: Only included if aiAudioServices was changed.
           properties:
             additionalHours:
               $ref: '#/ChangeDetails'
         ehrEmrIntegrationSeats:
           $ref: '#/ChangeDetails'
+          description: Only included if ehrEmrIntegrationSeats was changed.
         sipCredentials:
           type: object
           description: |
-            SIP credentials for registering a SIP client to an upstream register trunk. Optional. Only include if SIP registration is required.
+            Delta of SIP credentials if they were changed. Only included in the response if SIP credentials were modified.
           properties:
             username:
-              type: string
-              description: SIP username for registration
-              example: "user123"
+              $ref: '#/ChangeDetails'
             password:
-              type: string
-              description: SIP password for registration
-              example: "secret"
+              $ref: '#/ChangeDetails'
             domain:
-              type: string
-              description: SIP domain/realm
-              example: "sip.example.com"
+              $ref: '#/ChangeDetails'
             proxy:
-              type: string
-              description: SIP proxy server (optional)
-              example: "proxy.example.com"
+              $ref: '#/ChangeDetails'
             register:
-              type: boolean
-              description: Whether to register this client
-              example: true
+              $ref: '#/ChangeDetails'
             authUser:
-              type: string
-              description: Authentication username if different from username (optional)
-              example: "authuser123"
+              $ref: '#/ChangeDetails'
             outboundProxy:
-              type: string
-              description: Outbound proxy server (optional)
-              example: "outbound.example.com"
-          required:
-            - username
-            - password
-            - domain
-            - register
+              $ref: '#/ChangeDetails'
   required:
     - ccId
     - changes
@@ -265,13 +258,19 @@ ChangeDetails:  # New reusable schema for change details
   type: object
   properties:
     oldValue:
-      type: integer
       description: Value before the update.
       example: 10
+      oneOf:
+        - type: integer
+        - type: string
+        - type: boolean
     newValue:
-      type: integer
       description: Value after the update.
       example: 15
+      oneOf:
+        - type: integer
+        - type: string
+        - type: boolean
   required:
     - oldValue
     - newValue
