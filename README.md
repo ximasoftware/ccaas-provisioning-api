@@ -46,7 +46,6 @@ The API implements several security measures to ensure secure and reliable licen
 * **License Validation:** The API enforces minimum values for certain license parameters:
   * `workforceOptimizationSeats` and `workforceManagementSeats` require at least 10 seats
   * `speechAnalyticsSeats` and `dialerSeats` require at least 5 seats
-  * The aiMessaging object is used to configure AI messaging bundles. An Elite account includes a base Standard bundle.
 
 ## API Base URL
 

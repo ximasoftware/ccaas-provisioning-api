@@ -6,6 +6,7 @@ AiMessagingStandard:
   description: |
     Configuration for the Standard AI Messaging tier. 
     Each bundle provides 5,000 AI messages and 2 knowledge bases. 
+    Multiple bundles can be purchased to increase messages and knowledge bases.
     This tier cannot be combined with the Advanced tier.
   properties:
     standardBundles:
@@ -26,7 +27,8 @@ AiMessagingAdvanced:
   type: object
   description: |
     Configuration for the Advanced AI Messaging tier. 
-    Each bundle provides 5,000 AI messages and 5 knowledge bases, and includes support for 3rd party integrations (e.g., CRMs).
+    Choose this tier for 3rd party integration support (e.g., CRMs).
+    Each bundle provides 5,000 AI messages and 5 knowledge bases.
     This tier cannot be combined with the Standard tier.
   properties:
     standardBundles:
@@ -122,17 +124,12 @@ LicenseUpdateRequest:
       minimum: 5
       description: Number of Dialer seats (minimum 5)
       example: 5
-    additionalAiMessages:
-      type: integer
-      minimum: 0
-      description: Additional AI messages. Requires at least one Elite seat.
-      example: 5000
     aiMessaging:
       description: |
-        Configuration for AI Messaging. Choose ONE of the following tiers: Standard or Advanced. They cannot be combined.
-        - An account with at least one Elite license automatically includes one (1) Standard bundle. This does not increase with more Elite seats.
-        - To get more messages, purchase additional Standard bundles.
-        - To get more than 2 knowledge bases, you MUST purchase the Advanced tier.
+        Configuration for AI Messaging. Choose ONE of the following mutually exclusive tiers.
+        - An account with at least one Elite license automatically includes one (1) Standard bundle.
+        - **Standard Tier:** Purchase `standardBundles` for messages and knowledge bases. Each bundle adds 5,000 messages and 2 KBs.
+        - **Advanced Tier:** Purchase `advancedBundles` if you require 3rd party integrations.
       oneOf:
         - $ref: '#/AiMessagingStandard'
         - $ref: '#/AiMessagingAdvanced'
@@ -201,7 +198,6 @@ LicenseUpdateRequest:
     - workforceManagementSeats
     - speechAnalyticsSeats
     - dialerSeats
-    - additionalAiMessages
     - aiMessaging
     - aiAudioServices
     - ehrEmrIntegrationSeats
@@ -252,9 +248,6 @@ LicenseUpdateResponse:
         dialerSeats:
           $ref: '#/ChangeDetails'
           description: Only included if dialerSeats was changed.
-        additionalAiMessages:
-          $ref: '#/ChangeDetails'
-          description: Only included if additionalAiMessages was changed.
         aiMessaging:
           type: object
           description: Only included if aiMessaging was changed.

@@ -32,7 +32,6 @@ bearerAuth:
           "workforceManagementSeats": 10,
           "speechAnalyticsSeats": 5,
           "dialerSeats": 5,
-          "additionalAiMessages": 5000,
           "aiMessaging": {
             "standardBundles": 5,
             "advancedBundles": 0
@@ -56,10 +55,10 @@ bearerAuth:
         **Note:** Base AI messaging and audio services are included with professional and elite seats. 
 
         **AI Messaging Tiers:**
-        - An account with at least one Elite license automatically includes one (1) Standard bundle (5,000 messages and 2 knowledge bases).
         - Choose ONE of the AI Messaging tiers: Standard or Advanced. They cannot be combined.
-        - Standard tier (`standardBundles`): Each bundle provides 5,000 AI messages and 2 knowledge bases.
-        - Advanced tier (`advancedBundles`): Each bundle provides 5,000 AI messages and 5 knowledge bases, and includes support for 3rd party integrations.
+        - An account with at least one Elite license automatically includes one (1) Standard bundle (5,000 messages and 2 knowledge bases).
+        - **Standard tier (`standardBundles`):** Each bundle provides 5,000 AI messages and 2 knowledge bases. Purchase multiple bundles to increase capacity.
+        - **Advanced tier (`advancedBundles`):** Required for 3rd party integrations. Each bundle also provides 5,000 AI messages and 5 knowledge bases.
 
         The `aiAudioServices.additionalHours` field is for purchasing additional audio hours. The `sipCredentials` field is used for SIP (Session Initiation Protocol) configuration. It contains properties such as `username`, `password`, `domain`, `proxy`, `register`, `authUser`, and `outboundProxy` for setting up SIP communication.
 

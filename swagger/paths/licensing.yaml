@@ -14,7 +14,6 @@ post:
     * Seat quantities (`digitalOnlySeats`, `essentialSeats`, etc.) must be integers. See the schema for minimum values.
     * `workforceOptimizationSeats` and `workforceManagementSeats` have a minimum value of 10.
     * `speechAnalyticsSeats` and `dialerSeats` have a minimum value of 5.
-    * `additionalAiMessages` is the number of additional AI messages and requires at least one `eliteSeats`.
     * If SIP registration is required, include the optional sipCredentials object with the following properties: username, password, domain, proxy (optional), register, authUser (optional), outboundProxy (optional).
 
     **Authentication Requirements**
@@ -62,7 +61,6 @@ post:
         "workforceManagementSeats": 10,
         "speechAnalyticsSeats": 5,
         "dialerSeats": 5,
-        "additionalAiMessages": 5000,
         "aiMessaging": {
             "standardBundles": 5,
             "advancedBundles": 0
@@ -108,12 +106,11 @@ post:
     * The server tracks used JTIs until their expiration to prevent replay attacks.
 
     **Note:**
-    * Professional and Elite seats include a base number of AI messages and AI audio hours per agent. 
-    * An account with at least one Elite license automatically includes one (1) Standard AI Messaging bundle (5,000 messages and 2 knowledge bases).
-    * Choose ONE of the AI Messaging tiers: Standard or Advanced. They cannot be combined.
-    * Standard tier: Each bundle provides 5,000 AI messages and 2 knowledge bases.
-    * Advanced tier: Each bundle provides 5,000 AI messages and 5 knowledge bases, and includes support for 3rd party integrations.
-    * The aiAudioServices.additionalHours field is for purchasing additional audio hours beyond the included base.
+    * Professional and Elite seats include a base number of AI audio hours per agent.
+    * An account with at least one Elite license automatically includes one (1) Standard AI Messaging bundle.
+    * **Standard tier:** Each bundle provides 5,000 AI messages and 2 knowledge bases. Purchase more bundles for more capacity.
+    * **Advanced tier:** Required for 3rd party integrations. Each bundle also provides 5,000 messages and 5 knowledge bases.
+    * The `aiAudioServices.additionalHours` field is for purchasing additional transcription hours.
   security:
     - bearerAuth: []
   requestBody:
@@ -136,7 +133,6 @@ post:
               workforceManagementSeats: 10
               speechAnalyticsSeats: 5
               dialerSeats: 5
-              additionalAiMessages: 5000
               aiMessaging:
                 standardBundles: 5
                 advancedBundles: 0
@@ -174,9 +170,6 @@ post:
                   speechAnalyticsSeats:
                     oldValue: 5
                     newValue: 10
-                  additionalAiMessages:
-                    oldValue: 5000
-                    newValue: 10000
                   aiMessaging:
                     standardBundles:
                       oldValue: 3
