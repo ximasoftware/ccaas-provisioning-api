@@ -5,15 +5,37 @@ bearerAuth:
   scheme: bearer
   bearerFormat: JWT
   description: |
-    ## JWT Authentication
+    ## JWT Authentication with Certificate Fingerprint (RFC 7515/7517)
 
-    All API requests must be authenticated using a JWT token signed with your client's private key.
-    The public key to verify the signature should be obtained from the JWKS endpoint.
+    All API requests must be authenticated using a JWT token signed with your client's private key, following RFC 7515 (JSON Web Signature) and RFC 7517 (JSON Web Key) standards.
 
     ### JWKS Endpoint
 
-    The JWKS (JSON Web Key Set) endpoint is located at `/v1/.well-known/jwks.json`.
-    This endpoint provides the public keys needed to verify JWT signatures.
+    The JWKS (JSON Web Key Set) endpoint is located at `/licensing/.well-known/jwks.json`.
+    This endpoint provides the public keys needed to verify JWT signatures, indexed by certificate fingerprint.
+
+    ### Certificate Fingerprint Calculation
+
+    The `kid` (Key ID) claim must be the SHA-1 fingerprint of your client certificate:
+
+    ```python
+    # Calculate certificate fingerprint (SHA-1 hash of DER encoding)
+    from cryptography import x509
+    import hashlib
+
+    # Load your certificate
+    with open("client-cert.crt", "rb") as f:
+        cert_data = f.read()
+    
+    certificate = x509.load_pem_x509_certificate(cert_data)
+    
+    # Calculate SHA-1 fingerprint
+    der_bytes = certificate.public_bytes(encoding=x509.Encoding.DER)
+    fingerprint = hashlib.sha1(der_bytes).hexdigest()
+    
+    # Format as colon-separated hex (optional for display)
+    formatted_fingerprint = ':'.join(fingerprint[i:i+2] for i in range(0, len(fingerprint), 2)).upper()
+    ```
 
     ### JWT Creation Process
 
@@ -52,7 +74,7 @@ bearerAuth:
         }
         ```
 
-        **Note:** Base AI messaging and audio services are included with professional and elite seats. 
+        **Note:** Base AI messaging and audio services are included with professional and elite seats.
 
         **AI Messaging Tiers:**
         - Choose ONE of the AI Messaging tiers: Standard or Advanced. They cannot be combined.
@@ -72,24 +94,32 @@ bearerAuth:
         {
           "alg": "RS256",
           "typ": "JWT",
-          "kid": "<key-id>"
+          "kid": "<certificate-fingerprint>"
         }
         ```
-        * `kid`: The Key ID. This value MUST match the `kid` value of the key you want the API to use to verify the signature. The corresponding public key can be found in the JWKS endpoint.
+        * `kid`: The SHA-1 fingerprint of your client certificate (without colons). This value MUST match a certificate registered with Xima.
 
-        **Payload:**
+        **Payload (RFC 7519 Claims):**
         ```json
         {
+          "iss": "xima-ccaas",
+          "sub": "<certificate-fingerprint>",
+          "aud": "xima-ccaas",
           "payload_hash": "<sha256-hash-of-request-body>",
           "jti": "c16e0cab-5432-42d3-a2fd-8eb975dee4a9",
-          "exp": 1744412345
+          "exp": 1744412345,
+          "iat": 1744410545
         }
         ```
+        * `iss` (issuer): Must be "xima-ccaas"
+        * `sub` (subject): The SHA-1 fingerprint of your client certificate
+        * `aud` (audience): Must be "xima-ccaas"
         * `payload_hash`: The SHA-256 hash of the request body
         * `jti`: A unique UUID v4 identifier for this request (prevents replay attacks)
         * `exp`: Expiration timestamp (Unix epoch seconds) - max 30 minutes in the future
+        * `iat`: Issued at timestamp (Unix epoch seconds) - current time
 
-    6.  Sign the JWT with your private key.
+    6.  Sign the JWT with your private key using RS256 algorithm.
     7.  Add the JWT to the Authorization header:
 
         ```
@@ -97,7 +127,10 @@ bearerAuth:
         ```
 
     **Security Notes:**
+    - Follows industry-standard OAuth 2.0 Bearer Token Usage (RFC 6750)
     - Each JTI must be unique and should never be reused
     - The server tracks used JTIs until their expiration time to prevent replay attacks
+    - Certificate fingerprint serves as both authentication and authorization mechanism
     - If a request is made with a JTI that has already been used, a DUPLICATE_JTI error will be returned
     - If a request is made after its expiration time, an EXPIRED_TOKEN error will be returned
+    - If certificate fingerprint doesn't match a registered client, an INVALID_CERTIFICATE error will be returned

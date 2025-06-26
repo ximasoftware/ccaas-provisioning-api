@@ -164,9 +164,9 @@
 <div class="bg-xima-blue">
     <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div class="text-center">
-            <h1 class="text-3xl font-bold text-white sm:text-4xl">JWT Authentication</h1>
+            <h1 class="text-3xl font-bold text-white sm:text-4xl">JWT Kid Authentication</h1>
             <p class="mt-3 max-w-2xl mx-auto text-xl text-white">
-                Learn how to authenticate your requests to the Xima CCaaS License Provisioning API.
+                Learn how to authenticate your requests using industry-standard JWT with certificate fingerprint Key IDs.
             </p>
         </div>
     </div>
@@ -176,18 +176,33 @@
     <div class="mb-12">
         <h2 class="text-2xl font-bold text-gray-900 mb-4">Authentication Overview</h2>
         <p class="text-gray-700 mb-4">
-            The Xima CCaaS License Provisioning API uses JWT (JSON Web Token) authentication with client-side signatures. This approach provides strong security for your API requests without requiring you to transmit sensitive credentials.
+            The Xima CCaaS License Provisioning API uses JWT (JSON Web Token) authentication with certificate fingerprint-based Key IDs, following RFC 7515 (JSON Web Signature) and RFC 7517 (JSON Web Key) industry standards. This approach provides strong security for your API requests without requiring traditional mTLS infrastructure.
         </p>
         <p class="text-gray-700 mb-4">
             To authenticate your requests, you'll need to:
         </p>
         <ol class="list-decimal list-inside space-y-2 text-gray-700 mb-6">
-            <li>Prepare your license payload including a unique JTI (JWT ID) and expiration time</li>
+            <li>Calculate your certificate fingerprint (SHA-1 hash) for the <code>kid</code> claim</li>
+            <li>Prepare your license payload including required JWT claims</li>
             <li>Create a hash of the payload</li>
-            <li>Build a JWT containing the payload hash</li>
-            <li>Sign the JWT with your private key</li>
-            <li>Include the JWT in the Authorization header</li>
+            <li>Build a JWT containing the payload hash and standard RFC 7519 claims</li>
+            <li>Sign the JWT with your private key using RS256</li>
+            <li>Include the JWT in the Authorization header following OAuth 2.0 Bearer Token Usage (RFC 6750)</li>
         </ol>
+        <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-blue-700">
+                        <strong>Industry Standard:</strong> This authentication system follows the same JWT kid approach used by major cloud providers like Google Cloud, Microsoft Azure, Auth0, and AWS Cognito for certificate-based authentication.
+                    </p>
+                </div>
+            </div>
+        </div>
         <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
             <div class="flex">
                 <div class="flex-shrink-0">
@@ -208,9 +223,46 @@
         <h2 class="text-2xl font-bold text-gray-900 mb-4">Authentication Process</h2>
 
         <div class="auth-flow">
-            <!-- Step 1: Updated to use ccId, aiMessaging, aiAudioServices, ehrEmrIntegrationSeats, and sipCredentials objects -->
+            <!-- Step 1: Calculate Certificate Fingerprint -->
             <div class="auth-step">
                 <div class="auth-number gradient-blue text-white">1</div>
+                <div class="auth-content">
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Calculate Certificate Fingerprint</h3>
+                    <p class="text-gray-700 mb-2">
+                        Calculate the SHA-1 fingerprint of your client certificate to use as the <code>kid</code> (Key ID) claim.
+                    </p>
+                    <div class="code-block">
+<pre class="line-numbers language-python"><code>
+from cryptography import x509
+import hashlib
+
+# Load your client certificate
+with open("client-cert.crt", "rb") as f:
+    cert_data = f.read()
+
+certificate = x509.load_pem_x509_certificate(cert_data)
+
+# Calculate SHA-1 fingerprint of DER encoding
+der_bytes = certificate.public_bytes(encoding=x509.Encoding.DER)
+kid = hashlib.sha1(der_bytes).hexdigest()
+
+# Optional: Format for display (with colons)
+formatted_fingerprint = ':'.join(kid[i:i+2] for i in range(0, len(kid), 2)).upper()
+print(f"Certificate fingerprint: {formatted_fingerprint}")
+print(f"Kid for JWT: {kid}")
+</code></pre>
+                    </div>
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mt-2">
+                        <p class="text-sm text-blue-700">
+                            <strong>Note:</strong> The kid must be the SHA-1 hash of your certificate's DER encoding (without colons). This fingerprint must match a certificate registered with Xima.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Prepare License Payload -->
+            <div class="auth-step">
+                <div class="auth-number gradient-blue text-white">2</div>
                 <div class="auth-content">
                     <h3 class="text-lg font-medium text-gray-900 mb-2">Prepare License Payload</h3>
                     <p class="text-gray-700 mb-2">
@@ -255,9 +307,9 @@ license_payload = {
                 </div>
             </div>
 
-            <!-- Step 2: Hash calculation remains the same -->
+            <!-- Step 3: Hash the Payload -->
             <div class="auth-step">
-                <div class="auth-number gradient-blue text-white">2</div>
+                <div class="auth-number gradient-blue text-white">3</div>
                 <div class="auth-content">
                     <h3 class="text-lg font-medium text-gray-900 mb-2">Hash the Payload</h3>
                     <p class="text-gray-700 mb-2">
@@ -281,13 +333,13 @@ payload_hash = hashlib.sha256(payload_string).hexdigest()</code></pre>
                 </div>
             </div>
 
-            <!-- Step 3: Updated to include JTI and exp in JWT payload -->
+            <!-- Step 4: Create JWT with RFC 7519 Claims -->
             <div class="auth-step">
-                <div class="auth-number gradient-blue text-white">3</div>
+                <div class="auth-number gradient-blue text-white">4</div>
                 <div class="auth-content">
-                    <h3 class="text-lg font-medium text-gray-900 mb-2">Create JWT with JTI and Expiration</h3>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Create JWT with RFC 7519 Claims</h3>
                     <p class="text-gray-700 mb-2">
-                        Build the JWT header and payload, including the payload hash, JTI, and expiration time.
+                        Build the JWT header and payload with standard RFC claims and certificate fingerprint.
                     </p>
                     <div class="code-block">
 <pre class="line-numbers language-python"><code>import base64
@@ -297,22 +349,26 @@ import time
 # Generate a unique JTI
 jti = str(uuid.uuid4())
 
-# Set expiration time (30 minutes in the future)
+# Set timestamps
 current_time = int(time.time())
-expiration_time = current_time + (30 * 60)
+expiration_time = current_time + (30 * 60)  # 30 minutes in the future
 
-# JWT Header
+# JWT Header with certificate fingerprint
 jwt_header = {
     "alg": "RS256",
     "typ": "JWT",
-    "kid": "your-key-id"  # The key ID received from Xima
+    "kid": kid  # Certificate fingerprint from Step 1
 }
 
-# JWT Payload - Now includes JTI and exp
+# JWT Payload with RFC 7519 standard claims
 jwt_payload = {
-    "payload_hash": payload_hash,
-    "jti": jti,
-    "exp": expiration_time
+    "iss": "xima-ccaas",           # Issuer (required)
+    "sub": kid,                    # Subject - certificate fingerprint
+    "aud": "xima-ccaas",           # Audience (required)
+    "payload_hash": payload_hash,   # Request body hash
+    "jti": jti,                    # JWT ID - unique identifier
+    "exp": expiration_time,        # Expiration time
+    "iat": current_time            # Issued at time
 }
 
 # Base64URL encoding function
@@ -325,28 +381,33 @@ payload_encoded = base64url_encode(json.dumps(jwt_payload).encode('utf-8'))</cod
                     </div>
                     <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mt-2">
                         <p class="text-sm text-blue-700">
-                            <strong>Note:</strong> The JTI should be a unique UUID for each request. The expiration time must be a Unix timestamp (seconds since epoch) no more than 30 minutes in the future. The server will track used JTIs until their expiration to prevent replay attacks.
+                            <strong>RFC 7519 Claims:</strong> The issuer (<code>iss</code>) and audience (<code>aud</code>) must be "xima-ccaas". The subject (<code>sub</code>) should be your certificate fingerprint. Each JTI must be unique to prevent replay attacks.
                         </p>
                     </div>
                 </div>
             </div>
 
-            <!-- Step 4: Sign the JWT -->
+            <!-- Step 5: Sign the JWT -->
             <div class="auth-step">
-                <div class="auth-number gradient-blue text-white">4</div>
+                <div class="auth-number gradient-blue text-white">5</div>
                 <div class="auth-content">
-                    <h3 class="text-lg font-medium text-gray-900 mb-2">Sign the JWT</h3>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Sign the JWT with RS256</h3>
                     <p class="text-gray-700 mb-2">
-                        Sign the encoded header and payload with your private key.
+                        Sign the encoded header and payload with your private key using RS256 algorithm.
                     </p>
                     <div class="code-block">
 <pre class="line-numbers language-python"><code>from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import hashes
 
-# Assuming private_key is your loaded RSA private key
+# Load your private key (matching the certificate)
+from cryptography.hazmat.primitives.serialization import load_pem_private_key
+with open("client-key.pem", "rb") as f:
+    private_key = load_pem_private_key(f.read(), password=None)
+
+# Create message to sign
 message = f"{header_encoded}.{payload_encoded}".encode('utf-8')
 
-# Sign the message
+# Sign with RS256 (PKCS#1 v1.5 padding + SHA-256)
 signature = private_key.sign(
     message,
     padding.PKCS1v15(),
@@ -359,16 +420,21 @@ signature_encoded = base64url_encode(signature)
 # Combine to form complete JWT
 jwt = f"{header_encoded}.{payload_encoded}.{signature_encoded}"</code></pre>
                     </div>
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mt-2">
+                        <p class="text-sm text-blue-700">
+                            <strong>RS256 Algorithm:</strong> Uses PKCS#1 v1.5 padding with SHA-256 hashing, following RFC 7518 standards for JWT signatures.
+                        </p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Step 5: Send Authenticated Request -->
+            <!-- Step 6: Send Authenticated Request -->
             <div class="auth-step">
-                <div class="auth-number gradient-blue text-white">5</div>
+                <div class="auth-number gradient-blue text-white">6</div>
                 <div class="auth-content">
                     <h3 class="text-lg font-medium text-gray-900 mb-2">Send Authenticated Request</h3>
                     <p class="text-gray-700 mb-2">
-                        Make the API request with the JWT in the Authorization header and the JSON payload in the body.
+                        Make the API request with the JWT in the Authorization header following OAuth 2.0 Bearer Token Usage (RFC 6750).
                     </p>
                     <div class="code-block">
 <pre class="line-numbers language-python"><code>import requests
@@ -376,7 +442,7 @@ jwt = f"{header_encoded}.{payload_encoded}.{signature_encoded}"</code></pre>
 # API endpoint
 api_url = "https://licensing.api.ximadev.cloud/v1/api/licensing"
 
-# Headers with JWT
+# Headers with JWT Bearer token (RFC 6750)
 headers = {
     "Authorization": f"Bearer {jwt}",
     "Content-Type": "application/json"
@@ -396,6 +462,11 @@ if response.status_code == 200:
 else:
     print(f"Error: {response.status_code}")
     print(response.text)</code></pre>
+                    </div>
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mt-2">
+                        <p class="text-sm text-blue-700">
+                            <strong>OAuth 2.0 Bearer:</strong> The Authorization header follows RFC 6750 Bearer Token Usage standard for transmitting JWTs in HTTP requests.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -460,13 +531,13 @@ from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.serialization import load_pem_private_key
 
-def update_license(private_key_pem, key_id, license_data, api_url, expiration_minutes=30):
+def update_license(certificate_path, private_key_pem, license_data, api_url, expiration_minutes=30):
     """
-    Update license using the Xima CCaaS API with JWT authentication
+    Update license using the Xima CCaaS API with JWT kid authentication (RFC 7515/7517)
 
     Args:
+        certificate_path (str): Path to client certificate file (.crt)
         private_key_pem (str): PEM-encoded private key
-        key_id (str): Key ID (kid) provided by Xima
         license_data (dict): License payload
         api_url (str): API endpoint URL
         expiration_minutes (int): Minutes until expiration (default: 30, max: 30)
@@ -474,7 +545,17 @@ def update_license(private_key_pem, key_id, license_data, api_url, expiration_mi
     Returns:
         dict: API response data
     """
-    # Load private key
+    from cryptography import x509
+    
+    # Step 1: Calculate certificate fingerprint for kid
+    with open(certificate_path, "rb") as f:
+        cert_data = f.read()
+    
+    certificate = x509.load_pem_x509_certificate(cert_data)
+    der_bytes = certificate.public_bytes(encoding=x509.Encoding.DER)
+    kid = hashlib.sha1(der_bytes).hexdigest()
+
+    # Step 2: Load private key
     private_key = load_pem_private_key(
         private_key_pem.encode('utf-8'),
         password=None
@@ -483,43 +564,44 @@ def update_license(private_key_pem, key_id, license_data, api_url, expiration_mi
     # Ensure expiration is within limits
     expiration_minutes = min(expiration_minutes, 30)
 
-    # Calculate expiration time
+    # Step 3: Calculate timestamps
     current_time = int(time.time())
     expiration_time = current_time + (expiration_minutes * 60)
 
     # Generate unique JTI
     jti = str(uuid.uuid4())
 
-    # Step 1: Use license data as-is (no JTI or exp added)
-    license_data_clean = license_data.copy()
-
-    # Step 2: Serialize payload with specific parameters
-    payload_string = json.dumps(license_data_clean, sort_keys=False, separators=(',', ':')).encode('utf-8')
+    # Step 4: Serialize payload with specific parameters
+    payload_string = json.dumps(license_data, sort_keys=False, separators=(',', ':')).encode('utf-8')
     payload_hash = hashlib.sha256(payload_string).hexdigest()
 
-    # Step 3: Base64URL encode function
+    # Step 5: Base64URL encode function
     def base64url_encode(data):
         return base64.urlsafe_b64encode(data).rstrip(b'=').decode('utf-8')
 
-    # Step 4: Create JWT header and payload
+    # Step 6: Create JWT header and payload with RFC 7519 claims
     jwt_header = {
         "alg": "RS256",
         "typ": "JWT",
-        "kid": key_id
+        "kid": kid  # Certificate fingerprint
     }
 
-    # JWT payload now includes JTI and exp directly
+    # JWT payload with standard RFC claims
     jwt_payload = {
+        "iss": "xima-ccaas",        # Issuer (required)
+        "sub": kid,                 # Subject - certificate fingerprint
+        "aud": "xima-ccaas",        # Audience (required)
         "payload_hash": payload_hash,
-        "jti": jti,
-        "exp": expiration_time
+        "jti": jti,                 # JWT ID - unique identifier
+        "exp": expiration_time,     # Expiration time
+        "iat": current_time         # Issued at time
     }
 
-    # Step 5: Encode header and payload
+    # Step 7: Encode header and payload
     header_encoded = base64url_encode(json.dumps(jwt_header).encode('utf-8'))
     payload_encoded = base64url_encode(json.dumps(jwt_payload).encode('utf-8'))
 
-    # Step 6: Sign the JWT
+    # Step 8: Sign the JWT with RS256
     message = f"{header_encoded}.{payload_encoded}".encode('utf-8')
     signature = private_key.sign(
         message,
@@ -528,10 +610,10 @@ def update_license(private_key_pem, key_id, license_data, api_url, expiration_mi
     )
     signature_encoded = base64url_encode(signature)
 
-    # Step 7: Build complete JWT
+    # Step 9: Build complete JWT
     jwt = f"{header_encoded}.{payload_encoded}.{signature_encoded}"
 
-    # Step 8: Send authenticated request
+    # Step 10: Send authenticated request (RFC 6750 Bearer Token)
     headers = {
         "Authorization": f"Bearer {jwt}",
         "Content-Type": "application/json"
@@ -543,7 +625,7 @@ def update_license(private_key_pem, key_id, license_data, api_url, expiration_mi
         data=payload_string
     )
 
-    # Step 9: Handle response
+    # Step 11: Handle response
     if response.status_code == 200:
         return response.json()
     else:

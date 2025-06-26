@@ -3,11 +3,13 @@ openapi: 3.0.3
 info:
   title: Xima CCaaS License Provisioning API
   description: |
-    API for authorized resellers to provision and manage CCaaS licenses.
+    API for authorized resellers to provision and manage CCaaS licenses using industry-standard JWT authentication with certificate fingerprint-based Key IDs.
 
     **Important Security Note:**
 
-    The `/v1/licensing` endpoint requires strict adherence to payload ordering and signature generation procedures.  See the endpoint documentation for details.
+    The `/v1/licensing` endpoint requires JWT authentication following RFC 7515 (JSON Web Signature) and RFC 7517 (JSON Web Key) standards with certificate fingerprint-based `kid` claims. See the authentication documentation for details.
+
+    **JWKS Endpoint:** `/licensing/.well-known/jwks.json`
   version: 1.0.0
 tags:
   - name: License Management

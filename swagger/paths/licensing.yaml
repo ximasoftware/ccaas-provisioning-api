@@ -7,7 +7,7 @@ post:
   summary: Update license seats and features
   description: |
     Updates the number of seats for different license tiers and features for a customer.
-    Requires JWT authentication with a payload hash of the request body.
+    Requires JWT authentication with certificate fingerprint-based Key IDs following RFC 7515/7517 standards.
 
     **Restrictions:**
 
@@ -16,13 +16,33 @@ post:
     * `speechAnalyticsSeats` and `dialerSeats` have a minimum value of 5.
     * If SIP registration is required, include the optional sipCredentials object with the following properties: username, password, domain, proxy (optional), register, authUser (optional), outboundProxy (optional).
 
-    **Authentication Requirements**
+    **Authentication Requirements (RFC 7515/7517 JWT Kid Authentication)**
 
     Each request must include:
+    * A JWT with the following in its header:
+      * `kid`: SHA-1 fingerprint of your client certificate (without colons)
     * A JWT with the following in its payload:
+      * Standard RFC 7519 claims: `iss`, `sub`, `aud`, `iat`, `exp`, `jti`
       * A payload hash of the request body
       * A unique `jti` (JWT ID) - never reuse IDs
       * An `exp` (expiration) timestamp - max 30 minutes in the future
+
+    **Certificate Fingerprint Calculation**
+
+    The `kid` (Key ID) must be the SHA-1 fingerprint of your client certificate:
+
+    ```python
+    from cryptography import x509
+    import hashlib
+
+    # Load certificate and calculate fingerprint
+    with open("client-cert.crt", "rb") as f:
+        cert_data = f.read()
+    
+    certificate = x509.load_pem_x509_certificate(cert_data)
+    der_bytes = certificate.public_bytes(encoding=x509.Encoding.DER)
+    kid = hashlib.sha1(der_bytes).hexdigest()
+    ```
 
     **Signature Generation**
 
@@ -37,7 +57,7 @@ post:
         * This will produce a compact JSON string with no unnecessary whitespace.
     3.  **UTF-8 Encoding:** Encode the resulting JSON string as UTF-8.
     4.  **Hashing:** Calculate the SHA-256 hash of the UTF-8 encoded JSON string.
-    5.  Include the resulting hash in the `payload_hash` claim of your JWT along with `jti` and `exp` claims.
+    5.  Include the resulting hash in the `payload_hash` claim of your JWT along with RFC 7519 standard claims.
 
     **Example (Python)**
 
@@ -46,8 +66,17 @@ post:
     import hashlib
     import uuid
     import time
+    from cryptography import x509
 
-    # License update payload WITHOUT jti or exp
+    # Step 1: Calculate certificate fingerprint for kid
+    with open("client-cert.crt", "rb") as f:
+        cert_data = f.read()
+    
+    certificate = x509.load_pem_x509_certificate(cert_data)
+    der_bytes = certificate.public_bytes(encoding=x509.Encoding.DER)
+    kid = hashlib.sha1(der_bytes).hexdigest()
+
+    # Step 2: License update payload
     payload = {
         "ccId": {
             "id": "EXAMPLECUSTOMERID",
@@ -80,24 +109,35 @@ post:
         }
     }
 
-    # Serialize the JSON (important: with specific parameters)
+    # Step 3: Serialize the JSON (important: with specific parameters)
     payload_string = json.dumps(payload, sort_keys=False, separators=(',', ':')).encode('utf-8')
 
-    # Calculate the hash
+    # Step 4: Calculate the hash
     payload_hash = hashlib.sha256(payload_string).hexdigest()
 
-    # Current time and expiration (30 minutes in the future)
+    # Step 5: Current time and expiration (30 minutes in the future)
     current_time = int(time.time())
     expiration_time = current_time + (30 * 60)
 
-    # Create JWT payload with security claims
-    jwt_payload = {
-        "payload_hash": payload_hash,
-        "jti": str(uuid.uuid4()),  # Unique ID for this request
-        "exp": expiration_time     # Expiration timestamp
+    # Step 6: Create JWT header with certificate fingerprint
+    jwt_header = {
+        "alg": "RS256",
+        "typ": "JWT",
+        "kid": kid  # Certificate fingerprint
     }
 
-    # ... (Continue with JWT creation and signing)
+    # Step 7: Create JWT payload with RFC 7519 standard claims
+    jwt_payload = {
+        "iss": "xima-ccaas",        # Issuer (required)
+        "sub": kid,                 # Subject - certificate fingerprint
+        "aud": "xima-ccaas",        # Audience (required)
+        "payload_hash": payload_hash,
+        "jti": str(uuid.uuid4()),   # Unique ID for this request
+        "exp": expiration_time,     # Expiration timestamp
+        "iat": current_time         # Issued at timestamp
+    }
+
+    # ... (Continue with JWT creation and signing using RS256)
     ```
 
     **Important:**
