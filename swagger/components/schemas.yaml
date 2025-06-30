@@ -71,136 +71,178 @@ LicenseUpdateRequest:
   properties:
     ccId:
       type: object
-      description: Customer identifiers
+      description: Customer contact center identification (required)
       properties:
-        id:
+        resellerId:
           type: string
-          description: Customer identifier
-          example: EXAMPLECUSTOMERID
+          description: Reseller identifier
+          example: "RESELLER001"
         divisionId:
           type: string
           description: Division identifier
-          example: EXAMPLEDIVISIONID
+          example: "DIV456"
       required:
-        - id
+        - resellerId
         - divisionId
     digitalOnlySeats:
       type: integer
       minimum: 0
-      description: Number of Digital Only tier seats
-      example: 10
+      description: |
+        Number of Digital Only tier seats (optional).
+        If present: Must be either 0 (remove license) or >= 10.
+        Value of 0 indicates license removal.
+      example: 15
     essentialSeats:
       type: integer
       minimum: 0
-      description: Number of Essential tier seats
-      example: 10
+      description: |
+        Number of Essential tier seats (optional).
+        If present: Must be either 0 (remove license) or >= 10.
+        Value of 0 indicates license removal.
+      example: 15
     professionalSeats:
       type: integer
       minimum: 0
-      description: Number of Professional tier seats
-      example: 10
+      description: |
+        Number of Professional tier seats (optional).
+        If present: Must be either 0 (remove license) or >= 10.
+        Value of 0 indicates license removal.
+      example: 15
     eliteSeats:
       type: integer
       minimum: 0
-      description: Number of Elite tier seats
-      example: 10
+      description: |
+        Number of Elite tier seats (optional).
+        If present: Must be either 0 (remove license) or >= 10.
+        Value of 0 indicates license removal.
+      example: 15
     workforceOptimizationSeats:
       type: integer
-      minimum: 10
-      description: Number of Workforce Optimization seats (minimum 10)
+      minimum: 0
+      description: |
+        Number of Workforce Optimization seats (optional).
+        If present: Must be either 0 (remove license) or >= 10.
+        Value of 0 indicates license removal.
       example: 10
     workforceManagementSeats:
       type: integer
-      minimum: 10
-      description: Number of Workforce Management seats (minimum 10)
+      minimum: 0
+      description: |
+        Number of Workforce Management seats (optional).
+        If present: Must be either 0 (remove license) or >= 10.
+        Value of 0 indicates license removal.
       example: 10
     speechAnalyticsSeats:
       type: integer
-      minimum: 5
-      description: Number of Speech Analytics seats (minimum 5)
+      minimum: 0
+      description: |
+        Number of Speech Analytics seats (optional).
+        If present: Must be either 0 (remove license) or >= 5.
+        Value of 0 indicates license removal.
       example: 5
     dialerSeats:
       type: integer
-      minimum: 5
-      description: Number of Dialer seats (minimum 5)
-      example: 5
-    aiMessaging:
+      minimum: 0
       description: |
-        Configuration for AI Messaging. Choose ONE of the following mutually exclusive tiers.
-        - An account with at least one Elite license automatically includes one (1) Standard bundle.
-        - **Standard Tier:** Purchase `standardBundles` for messages and knowledge bases. Each bundle adds 5,000 messages and 2 KBs.
-        - **Advanced Tier:** Purchase `advancedBundles` if you require 3rd party integrations.
-      oneOf:
-        - $ref: '#/AiMessagingStandard'
-        - $ref: '#/AiMessagingAdvanced'
+        Number of Dialer seats (optional).
+        If present: Must be either 0 (remove license) or >= 5.
+        Value of 0 indicates license removal.
+      example: 5
+    ehrEmrIntegrationSeats:
+      type: integer
+      minimum: 0
+      description: |
+        Number of EHR/EMR integration seats (optional).
+        If present: Must be either 0 (remove license) or >= 1.
+        Value of 0 indicates license removal.
+      example: 1
+    aiMessaging:
+      type: object
+      description: |
+        AI Messaging configuration (optional).
+        **Mutual Exclusivity Rule**: Only one bundle type can be > 0 at a time.
+        Each field is optional within the object.
+        Value of 0 indicates license removal for that bundle type.
+      properties:
+        standardBundles:
+          type: integer
+          minimum: 0
+          description: |
+            Number of Standard AI Messaging bundles (optional).
+            Each bundle provides 5,000 messages and 2 knowledge bases.
+            Cannot be > 0 if advancedBundles > 0.
+          example: 5
+        advancedBundles:
+          type: integer
+          minimum: 0
+          description: |
+            Number of Advanced AI Messaging bundles (optional).
+            Each bundle provides 5,000 messages and 5 knowledge bases.
+            Required for 3rd party integrations.
+            Cannot be > 0 if standardBundles > 0.
+          example: 0
     aiAudioServices:
       type: object
       description: |
-        AI Audio Services options. Professional and Elite seats include a base number of AI audio hours per agent. Use additionalHours to purchase more.
+        AI Audio Services configuration (optional).
+        If present, must contain additionalHours field.
+        Value of 0 indicates license removal.
       properties:
         additionalHours:
           type: integer
           minimum: 0
-          description: Number of additional AI audio hours
-          example: 20
+          description: |
+            Number of additional AI transcription hours (required if aiAudioServices is present).
+            Professional and Elite seats include base hours per agent.
+          example: 25
       required:
         - additionalHours
-    ehrEmrIntegrationSeats:
-      type: integer
-      minimum: 0
-      description: Number of EHR/EMR integration seats
-      example: 10
     sipCredentials:
       type: object
       description: |
-        SIP credentials for registering a SIP client to an upstream register trunk. Optional. Only include if SIP registration is required.
+        SIP credentials for upstream SIP registration (optional).
+        If present, all fields within the object are required.
       properties:
         username:
           type: string
-          description: SIP username for registration
+          minLength: 1
+          description: SIP username for registration (required if sipCredentials is present)
           example: "user123"
         password:
           type: string
-          description: SIP password for registration
+          minLength: 1
+          description: SIP password for registration (required if sipCredentials is present)
           example: "secret"
-        domain:
+        sipPort:
+          type: integer
+          minimum: 1
+          maximum: 65535
+          description: SIP port number (required if sipCredentials is present)
+          example: 5061
+        sipServer:
           type: string
-          description: SIP domain/realm
-          example: "sip.example.com"
-        proxy:
+          minLength: 1
+          description: SIP server hostname or IP (required if sipCredentials is present)
+          example: "sip_server.example.com"
+        transport:
           type: string
-          description: SIP proxy server (optional)
-          example: "proxy.example.com"
-        register:
-          type: boolean
-          description: Whether to register this client
-          example: true
-        authUser:
-          type: string
-          description: Authentication username if different from username (optional)
-          example: "authuser123"
+          enum: ["udp", "tcp", "tls"]
+          description: SIP transport protocol (required if sipCredentials is present)
+          example: "udp"
         outboundProxy:
           type: string
-          description: Outbound proxy server (optional)
+          minLength: 1
+          description: Outbound proxy server (required if sipCredentials is present)
           example: "outbound.example.com"
       required:
         - username
         - password
-        - domain
-        - register
+        - sipPort
+        - sipServer
+        - transport
+        - outboundProxy
   required:
     - ccId
-    - digitalOnlySeats
-    - essentialSeats
-    - professionalSeats
-    - eliteSeats
-    - workforceOptimizationSeats
-    - workforceManagementSeats
-    - speechAnalyticsSeats
-    - dialerSeats
-    - aiMessaging
-    - aiAudioServices
-    - ehrEmrIntegrationSeats
 
 LicenseUpdateResponse:
   type: object
@@ -209,16 +251,16 @@ LicenseUpdateResponse:
       type: object
       description: Customer identifiers
       properties:
-        id:
+        resellerId:
           type: string
-          description: Customer identifier
-          example: EXAMPLECUSTOMERID
+          description: Reseller identifier
+          example: "RESELLER001"
         divisionId:
           type: string
           description: Division identifier
-          example: EXAMPLEDIVISIONID
+          example: "DIV456"
       required:
-        - id
+        - resellerId
         - divisionId
     changes:
       type: object

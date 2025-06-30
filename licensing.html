@@ -58,15 +58,122 @@
     <div class="bg-xima-blue">
         <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
             <div class="text-center">
-                <h1 class="text-3xl font-bold text-white sm:text-4xl">AI Services Licensing Guide</h1>
+                <h1 class="text-3xl font-bold text-white sm:text-4xl">XIMA CCaaS Licensing Guide</h1>
                 <p class="mt-3 max-w-3xl mx-auto text-xl text-white">
-                    A detailed guide to the licensing models for Transcription & Sentiment Analysis and AI Messaging bots.
+                    Complete guide to license types, seat configurations, AI services, and validation rules for the XIMA CCaaS platform.
                 </p>
             </div>
         </div>
     </div>
 
     <div class="max-w-4xl mx-auto py-12 px-6">
+        <!-- Section: API Overview -->
+        <div class="mb-16">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                <svg class="w-8 h-8 mr-3 text-xima-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                API Endpoint & Validation Rules
+            </h2>
+            <p class="text-gray-700 mb-6">
+                The XIMA CCaaS Licensing API uses <strong>POST /v1/licensing/update</strong> endpoint with comprehensive validation rules to ensure data integrity and business logic compliance.
+            </p>
+
+            <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-6">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-green-700">
+                            <strong>Key Validation Pattern:</strong> All seat fields follow the "0 or minimum" rule - values must be either 0 (remove license) or meet the minimum requirement for that seat type.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">Basic Seat Types</h3>
+            <div class="space-y-4">
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <h4 class="font-bold text-gray-900">Digital Only, Essential, Professional, Elite Seats</h4>
+                    <p class="text-gray-600 mt-1"><strong>Rule:</strong> Must be either 0 (remove license) or ≥ 10</p>
+                    <p class="text-gray-600">These are the core seat types for different service tiers. Each has different feature inclusions.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <h4 class="font-bold text-gray-900">Workforce Optimization & Management Seats</h4>
+                    <p class="text-gray-600 mt-1"><strong>Rule:</strong> Must be either 0 (remove license) or ≥ 10</p>
+                    <p class="text-gray-600">Advanced workforce management features require minimum 10-seat purchases.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <h4 class="font-bold text-gray-900">Speech Analytics & Dialer Seats</h4>
+                    <p class="text-gray-600 mt-1"><strong>Rule:</strong> Must be either 0 (remove license) or ≥ 5</p>
+                    <p class="text-gray-600">Specialized analytics and dialing capabilities with lower minimum thresholds.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <h4 class="font-bold text-gray-900">EHR/EMR Integration Seats</h4>
+                    <p class="text-gray-600 mt-1"><strong>Rule:</strong> Must be either 0 (remove license) or ≥ 1</p>
+                    <p class="text-gray-600">Healthcare integration capabilities can be purchased per individual seat.</p>
+                </div>
+    
+                <!-- SIP Credentials Section -->
+                <div class="bg-gray-50 border-l-4 border-gray-400 p-4 mt-8">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+                        </div>
+                        <div class="ml-3">
+                            <h4 class="text-sm font-bold text-gray-800">SIP Credentials Validation</h4>
+                            <p class="text-sm text-gray-700 mt-1">
+                                SIP credentials are optional but if included, all fields are required: <code>username</code>, <code>password</code>, <code>sipPort</code> (1-65535), <code>sipServer</code>, <code>transport</code> (udp/tcp/tls), and <code>outboundProxy</code>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Section: API Integration Examples -->
+            <div class="mb-16">
+                <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                    <svg class="w-8 h-8 mr-3 text-xima-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    Common API Usage Patterns
+                </h2>
+                <p class="text-gray-700 mb-6">
+                    Examples of typical licensing operations using the validation rules.
+                </p>
+    
+                <div class="space-y-6">
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                        <h4 class="font-bold text-gray-900 mb-2">Adding New Licenses</h4>
+                        <p class="text-gray-600 mb-3">Provision new seats with minimum values:</p>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded text-sm overflow-x-auto"><code>{
+      "ccId": {"resellerId": "RESELLER001", "divisionId": "DIV456"},
+      "digitalOnlySeats": 15,
+      "speechAnalyticsSeats": 5,
+      "aiMessaging": {"standardBundles": 3, "advancedBundles": 0}
+    }</code></pre>
+                    </div>
+    
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                        <h4 class="font-bold text-gray-900 mb-2">Removing Licenses</h4>
+                        <p class="text-gray-600 mb-3">Set values to 0 to remove licenses:</p>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded text-sm overflow-x-auto"><code>{
+      "ccId": {"resellerId": "RESELLER001", "divisionId": "DIV456"},
+      "essentialSeats": 0,
+      "dialerSeats": 0,
+      "aiMessaging": {"standardBundles": 0, "advancedBundles": 0}
+    }</code></pre>
+                    </div>
+    
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                        <h4 class="font-bold text-gray-900 mb-2">Switching AI Messaging Tiers</h4>
+                        <p class="text-gray-600 mb-3">Switch from Standard to Advanced (note mutual exclusivity):</p>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded text-sm overflow-x-auto"><code>{
+      "ccId": {"resellerId": "RESELLER001", "divisionId": "DIV456"},
+      "aiMessaging": {"standardBundles": 0, "advancedBundles": 2}
+    }</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Section: Transcription & Sentiment Analysis -->
         <div class="mb-16">
             <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
@@ -130,25 +237,37 @@
                 </div>
             </div>
 
-            <h3 class="text-xl font-semibold text-gray-800 mb-4">Licensing Tiers (Standard vs. Advanced)</h3>
-            <p class="text-gray-700 mb-6">You must choose one tier for the account. Standard and Advanced bundles cannot be mixed.</p>
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">Mutual Exclusivity Rules</h3>
+            <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-red-700">
+                            <strong>Critical Rule:</strong> Only one bundle type can be > 0 at a time. You cannot have both standardBundles > 0 AND advancedBundles > 0 simultaneously.
+                        </p>
+                    </div>
+                </div>
+            </div>
 
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">Bundle Types</h3>
             <!-- Comparison Table -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Standard Tier -->
                 <div class="bg-white p-6 rounded-lg shadow-sm border-2 border-xima-blue">
-                    <h4 class="text-lg font-bold text-xima-blue">Standard Tier</h4>
-                    <p class="text-xs text-gray-500 mb-4">API Part: `Xima-MAI-Standard-1`</p>
+                    <h4 class="text-lg font-bold text-xima-blue">Standard Bundles</h4>
+                    <p class="text-xs text-gray-500 mb-4">API Field: <code>standardBundles</code></p>
                     <ul class="space-y-3 text-gray-700">
                         <li class="flex items-center"><svg class="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> <strong>5,000</strong> Messages per bundle</li>
                         <li class="flex items-center"><svg class="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> <strong>2</strong> Knowledge Bases per bundle</li>
-                        <li class="flex items-center"><svg class="w-5 h-5 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg> 3rd Party Integrations</li>
+                        <li class="flex items-center"><svg class="w-5 h-5 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg> No 3rd Party Integrations</li>
                     </ul>
                 </div>
                 <!-- Advanced Tier -->
                 <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <h4 class="text-lg font-bold text-gray-900">Advanced Tier</h4>
-                     <p class="text-xs text-gray-500 mb-4">API Part: `Xima-MAI-Advanced-1`</p>
+                    <h4 class="text-lg font-bold text-gray-900">Advanced Bundles</h4>
+                     <p class="text-xs text-gray-500 mb-4">API Field: <code>advancedBundles</code></p>
                     <ul class="space-y-3 text-gray-700">
                         <li class="flex items-center"><svg class="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> <strong>5,000</strong> Messages per bundle</li>
                         <li class="flex items-center"><svg class="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> <strong>5</strong> Knowledge Bases per bundle</li>

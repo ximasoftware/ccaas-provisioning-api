@@ -1,6 +1,4 @@
 # paths/licensing.yaml
-# The 'update:' key has been REMOVED from here.
-# 'post:' is now at the root level of this file.
 post:
   tags:
     - License Management
@@ -9,12 +7,15 @@ post:
     Updates the number of seats for different license tiers and features for a customer.
     Requires JWT authentication with certificate fingerprint-based Key IDs following RFC 7515/7517 standards.
 
-    **Restrictions:**
+    **Validation Rules:**
 
-    * Seat quantities (`digitalOnlySeats`, `essentialSeats`, etc.) must be integers. See the schema for minimum values.
-    * `workforceOptimizationSeats` and `workforceManagementSeats` have a minimum value of 10.
-    * `speechAnalyticsSeats` and `dialerSeats` have a minimum value of 5.
-    * If SIP registration is required, include the optional sipCredentials object with the following properties: username, password, domain, proxy (optional), register, authUser (optional), outboundProxy (optional).
+    * All fields except `ccId` are optional
+    * For optional seat fields: Must be either `0` (remove license) or meet minimum requirements
+    * Basic seat types (`digitalOnlySeats`, `essentialSeats`, etc.): Minimum 10 when not 0
+    * `speechAnalyticsSeats` and `dialerSeats`: Minimum 5 when not 0
+    * `ehrEmrIntegrationSeats`: Minimum 1 when not 0
+    * AI Messaging: Mutual exclusivity - only one bundle type can be > 0 at a time
+    * SIP Credentials: If present, all fields within the object are required
 
     **Authentication Requirements (RFC 7515/7517 JWT Kid Authentication)**
 
@@ -79,32 +80,30 @@ post:
     # Step 2: License update payload
     payload = {
         "ccId": {
-            "id": "EXAMPLECUSTOMERID",
-            "divisionId": "EXAMPLEDIVISIONID"
+            "resellerId": "RESELLER001",
+            "divisionId": "DIV456"
         },
-        "digitalOnlySeats": 10,
-        "essentialSeats": 10,
-        "professionalSeats": 10,
+        "digitalOnlySeats": 15,
+        "essentialSeats": 0,           # Remove essential seats
+        "professionalSeats": 25,
         "eliteSeats": 10,
         "workforceOptimizationSeats": 10,
-        "workforceManagementSeats": 10,
         "speechAnalyticsSeats": 5,
-        "dialerSeats": 5,
+        "dialerSeats": 0,              # Remove dialer seats
         "aiMessaging": {
-            "standardBundles": 5,
-            "advancedBundles": 0
+            "standardBundles": 5,      # Standard bundles
+            "advancedBundles": 0       # Advanced must be 0 when standard > 0
         },
         "aiAudioServices": {
-            "additionalHours": 20
+            "additionalHours": 25
         },
-        "ehrEmrIntegrationSeats": 10,
+        "ehrEmrIntegrationSeats": 1,
         "sipCredentials": {
             "username": "user123",
             "password": "secret",
-            "domain": "sip.example.com",
-            "proxy": "proxy.example.com",
-            "register": true,
-            "authUser": "authuser123",
+            "sipPort": 5061,
+            "sipServer": "sip_server.example.com",
+            "transport": "udp",
             "outboundProxy": "outbound.example.com"
         }
     }
@@ -163,30 +162,28 @@ post:
           defaultExample: #
             value:
               ccId:
-                id: EXAMPLECUSTOMERID
-                divisionId: EXAMPLEDIVISIONID
-              digitalOnlySeats: 10
-              essentialSeats: 10
-              professionalSeats: 10
+                resellerId: "RESELLER001"
+                divisionId: "DIV456"
+              digitalOnlySeats: 15
+              essentialSeats: 0
+              professionalSeats: 25
               eliteSeats: 10
               workforceOptimizationSeats: 10
-              workforceManagementSeats: 10
               speechAnalyticsSeats: 5
-              dialerSeats: 5
+              dialerSeats: 0
               aiMessaging:
                 standardBundles: 5
                 advancedBundles: 0
               aiAudioServices:
-                additionalHours: 20
-              ehrEmrIntegrationSeats: 10
+                additionalHours: 25
+              ehrEmrIntegrationSeats: 1
               sipCredentials:
-                username: user123
-                password: secret
-                domain: sip.example.com
-                proxy: proxy.example.com
-                register: true
-                authUser: authuser123
-                outboundProxy: outbound.example.com
+                username: "user123"
+                password: "secret"
+                sipPort: 5061
+                sipServer: "sip_server.example.com"
+                transport: "udp"
+                outboundProxy: "outbound.example.com"
   responses:
     '200':
       description: License updated successfully. The response only includes fields that were changed as a result of the POST.
@@ -198,18 +195,24 @@ post:
             successResponse: #
               value:
                 ccId:
-                  id: EXAMPLECUSTOMERID
-                  divisionId: EXAMPLEDIVISIONID
+                  resellerId: "RESELLER001"
+                  divisionId: "DIV456"
                 changes:
                   digitalOnlySeats:
                     oldValue: 10
                     newValue: 15
-                  eliteSeats:
+                  essentialSeats:
                     oldValue: 10
-                    newValue: 20
-                  speechAnalyticsSeats:
+                    newValue: 0
+                  eliteSeats:
                     oldValue: 5
                     newValue: 10
+                  speechAnalyticsSeats:
+                    oldValue: 10
+                    newValue: 5
+                  dialerSeats:
+                    oldValue: 5
+                    newValue: 0
                   aiMessaging:
                     standardBundles:
                       oldValue: 3
@@ -220,10 +223,10 @@ post:
                   aiAudioServices:
                     additionalHours:
                       oldValue: 10
-                      newValue: 20
+                      newValue: 25
                   ehrEmrIntegrationSeats:
-                    oldValue: 5
-                    newValue: 10
+                    oldValue: 0
+                    newValue: 1
                   sipCredentials:
                     username:
                       oldValue: "user456"
@@ -231,9 +234,9 @@ post:
                     password:
                       oldValue: "oldpassword"
                       newValue: "secret"
-                    domain:
+                    sipServer:
                       oldValue: "old.example.com"
-                      newValue: "sip.example.com"
+                      newValue: "sip_server.example.com"
     '400':
       description: Bad request - Invalid parameters
       content:

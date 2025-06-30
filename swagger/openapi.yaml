@@ -33,5 +33,5 @@ components:
 
 # Paths are referenced from external files
 paths:
-  /licensing:
+  /v1/licensing/update:
     $ref: './paths/licensing.yaml'
