@@ -94,23 +94,23 @@
             <div class="space-y-4">
                 <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                     <h4 class="font-bold text-gray-900">Digital Only, Essential, Professional, Elite Seats</h4>
-                    <p class="text-gray-600 mt-1"><strong>Rule:</strong> Must be either 0 (remove license) or ≥ 10</p>
+                    <p class="text-gray-600 mt-1"><strong>Rule:</strong> Must be either 0 (remove license) or ≥ 5</p>
                     <p class="text-gray-600">These are the core seat types for different service tiers. Each has different feature inclusions.</p>
                 </div>
                 <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                     <h4 class="font-bold text-gray-900">Workforce Optimization & Management Seats</h4>
-                    <p class="text-gray-600 mt-1"><strong>Rule:</strong> Must be either 0 (remove license) or ≥ 10</p>
-                    <p class="text-gray-600">Advanced workforce management features require minimum 10-seat purchases.</p>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <h4 class="font-bold text-gray-900">Speech Analytics & Dialer Seats</h4>
                     <p class="text-gray-600 mt-1"><strong>Rule:</strong> Must be either 0 (remove license) or ≥ 5</p>
-                    <p class="text-gray-600">Specialized analytics and dialing capabilities with lower minimum thresholds.</p>
+                    <p class="text-gray-600">Advanced workforce management features require minimum 5-seat purchases.</p>
                 </div>
                 <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <h4 class="font-bold text-gray-900">EHR/EMR Integration Seats</h4>
-                    <p class="text-gray-600 mt-1"><strong>Rule:</strong> Must be either 0 (remove license) or ≥ 1</p>
-                    <p class="text-gray-600">Healthcare integration capabilities can be purchased per individual seat.</p>
+                    <h4 class="font-bold text-gray-900">Speech Analytics Seats</h4>
+                    <p class="text-gray-600 mt-1"><strong>Rule:</strong> Must be either 0 (remove license) or ≥ 5</p>
+                    <p class="text-gray-600">Analytics capabilities with minimum 5-seat requirement.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <h4 class="font-bold text-gray-900">Dialer Seats</h4>
+                    <p class="text-gray-600 mt-1"><strong>Rule:</strong> Must be either 0 (remove license) or ≥ 10</p>
+                    <p class="text-gray-600">Specialized dialing capabilities require minimum 10-seat purchases.</p>
                 </div>
     
                 <!-- SIP Credentials Section -->
@@ -145,8 +145,9 @@
                         <p class="text-gray-600 mb-3">Provision new seats with minimum values:</p>
                         <pre class="bg-gray-800 text-gray-100 p-4 rounded text-sm overflow-x-auto"><code>{
       "ccId": {"resellerId": "RESELLER001", "divisionId": "DIV456"},
-      "digitalOnlySeats": 15,
+      "digitalOnlySeats": 5,
       "speechAnalyticsSeats": 5,
+      "dialerSeats": 10,
       "aiMessaging": {"standardBundles": 3, "advancedBundles": 0}
     }</code></pre>
                     </div>

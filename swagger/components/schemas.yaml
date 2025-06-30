@@ -89,49 +89,49 @@ LicenseUpdateRequest:
       minimum: 0
       description: |
         Number of Digital Only tier seats (optional).
-        If present: Must be either 0 (remove license) or >= 10.
+        If present: Must be either 0 (remove license) or >= 5.
         Value of 0 indicates license removal.
-      example: 15
+      example: 5
     essentialSeats:
       type: integer
       minimum: 0
       description: |
         Number of Essential tier seats (optional).
-        If present: Must be either 0 (remove license) or >= 10.
+        If present: Must be either 0 (remove license) or >= 5.
         Value of 0 indicates license removal.
-      example: 15
+      example: 5
     professionalSeats:
       type: integer
       minimum: 0
       description: |
         Number of Professional tier seats (optional).
-        If present: Must be either 0 (remove license) or >= 10.
+        If present: Must be either 0 (remove license) or >= 5.
         Value of 0 indicates license removal.
-      example: 15
+      example: 5
     eliteSeats:
       type: integer
       minimum: 0
       description: |
         Number of Elite tier seats (optional).
-        If present: Must be either 0 (remove license) or >= 10.
+        If present: Must be either 0 (remove license) or >= 5.
         Value of 0 indicates license removal.
-      example: 15
+      example: 5
     workforceOptimizationSeats:
       type: integer
       minimum: 0
       description: |
         Number of Workforce Optimization seats (optional).
-        If present: Must be either 0 (remove license) or >= 10.
+        If present: Must be either 0 (remove license) or >= 5.
         Value of 0 indicates license removal.
-      example: 10
+      example: 5
     workforceManagementSeats:
       type: integer
       minimum: 0
       description: |
         Number of Workforce Management seats (optional).
-        If present: Must be either 0 (remove license) or >= 10.
+        If present: Must be either 0 (remove license) or >= 5.
         Value of 0 indicates license removal.
-      example: 10
+      example: 5
     speechAnalyticsSeats:
       type: integer
       minimum: 0
@@ -145,17 +145,9 @@ LicenseUpdateRequest:
       minimum: 0
       description: |
         Number of Dialer seats (optional).
-        If present: Must be either 0 (remove license) or >= 5.
+        If present: Must be either 0 (remove license) or >= 10.
         Value of 0 indicates license removal.
-      example: 5
-    ehrEmrIntegrationSeats:
-      type: integer
-      minimum: 0
-      description: |
-        Number of EHR/EMR integration seats (optional).
-        If present: Must be either 0 (remove license) or >= 1.
-        Value of 0 indicates license removal.
-      example: 1
+      example: 10
     aiMessaging:
       type: object
       description: |
@@ -304,9 +296,6 @@ LicenseUpdateResponse:
           properties:
             additionalHours:
               $ref: '#/ChangeDetails'
-        ehrEmrIntegrationSeats:
-          $ref: '#/ChangeDetails'
-          description: Only included if ehrEmrIntegrationSeats was changed.
         sipCredentials:
           type: object
           description: |

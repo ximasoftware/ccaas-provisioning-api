@@ -11,9 +11,9 @@ post:
 
     * All fields except `ccId` are optional
     * For optional seat fields: Must be either `0` (remove license) or meet minimum requirements
-    * Basic seat types (`digitalOnlySeats`, `essentialSeats`, etc.): Minimum 10 when not 0
-    * `speechAnalyticsSeats` and `dialerSeats`: Minimum 5 when not 0
-    * `ehrEmrIntegrationSeats`: Minimum 1 when not 0
+    * Basic seat types (`digitalOnlySeats`, `essentialSeats`, etc.): Minimum 5 when not 0
+    * `speechAnalyticsSeats`: Minimum 5 when not 0
+    * `dialerSeats`: Minimum 10 when not 0
     * AI Messaging: Mutual exclusivity - only one bundle type can be > 0 at a time
     * SIP Credentials: If present, all fields within the object are required
 
@@ -83,13 +83,13 @@ post:
             "resellerId": "RESELLER001",
             "divisionId": "DIV456"
         },
-        "digitalOnlySeats": 15,
+        "digitalOnlySeats": 5,
         "essentialSeats": 0,           # Remove essential seats
-        "professionalSeats": 25,
-        "eliteSeats": 10,
-        "workforceOptimizationSeats": 10,
+        "professionalSeats": 5,
+        "eliteSeats": 5,
+        "workforceOptimizationSeats": 5,
         "speechAnalyticsSeats": 5,
-        "dialerSeats": 0,              # Remove dialer seats
+        "dialerSeats": 10,             # Minimum 10 for dialer seats
         "aiMessaging": {
             "standardBundles": 5,      # Standard bundles
             "advancedBundles": 0       # Advanced must be 0 when standard > 0
@@ -97,7 +97,6 @@ post:
         "aiAudioServices": {
             "additionalHours": 25
         },
-        "ehrEmrIntegrationSeats": 1,
         "sipCredentials": {
             "username": "user123",
             "password": "secret",
@@ -164,19 +163,18 @@ post:
               ccId:
                 resellerId: "RESELLER001"
                 divisionId: "DIV456"
-              digitalOnlySeats: 15
+              digitalOnlySeats: 5
               essentialSeats: 0
-              professionalSeats: 25
-              eliteSeats: 10
-              workforceOptimizationSeats: 10
+              professionalSeats: 5
+              eliteSeats: 5
+              workforceOptimizationSeats: 5
               speechAnalyticsSeats: 5
-              dialerSeats: 0
+              dialerSeats: 10
               aiMessaging:
                 standardBundles: 5
                 advancedBundles: 0
               aiAudioServices:
                 additionalHours: 25
-              ehrEmrIntegrationSeats: 1
               sipCredentials:
                 username: "user123"
                 password: "secret"
@@ -199,20 +197,20 @@ post:
                   divisionId: "DIV456"
                 changes:
                   digitalOnlySeats:
-                    oldValue: 10
-                    newValue: 15
+                    oldValue: 0
+                    newValue: 5
                   essentialSeats:
-                    oldValue: 10
+                    oldValue: 5
                     newValue: 0
                   eliteSeats:
-                    oldValue: 5
-                    newValue: 10
+                    oldValue: 0
+                    newValue: 5
                   speechAnalyticsSeats:
-                    oldValue: 10
+                    oldValue: 0
                     newValue: 5
                   dialerSeats:
-                    oldValue: 5
-                    newValue: 0
+                    oldValue: 0
+                    newValue: 10
                   aiMessaging:
                     standardBundles:
                       oldValue: 3
@@ -224,9 +222,6 @@ post:
                     additionalHours:
                       oldValue: 10
                       newValue: 25
-                  ehrEmrIntegrationSeats:
-                    oldValue: 0
-                    newValue: 1
                   sipCredentials:
                     username:
                       oldValue: "user456"
