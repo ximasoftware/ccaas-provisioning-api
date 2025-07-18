@@ -15,7 +15,7 @@ post:
     * `speechAnalyticsSeats`: Minimum 5 when not 0
     * `dialerSeats`: Minimum 10 when not 0
     * AI Messaging: Mutual exclusivity - only one bundle type can be > 0 at a time
-    * SIP Credentials: If present, all fields within the object are required
+    * SIP Credentials: If present, username, password, sipServer, and outboundProxy are required. sipPort and transport are optional but must be provided together (when omitted, SRV lookup is used)
 
     **Authentication Requirements (RFC 7515/7517 JWT Kid Authentication)**
 
@@ -181,6 +181,19 @@ post:
                 sipPort: 5061
                 sipServer: "sip_server.example.com"
                 transport: "udp"
+                outboundProxy: "outbound.example.com"
+          sipCredentialsWithSrvLookup: #
+            summary: "SIP Credentials using SRV lookup"
+            description: "Example with sipPort and transport omitted, enabling SRV lookup"
+            value:
+              ccId:
+                resellerId: "RESELLER001"
+                divisionId: "DIV456"
+              digitalOnlySeats: 5
+              sipCredentials:
+                username: "user123"
+                password: "secret"
+                sipServer: "sip_server.example.com"
                 outboundProxy: "outbound.example.com"
   responses:
     '200':

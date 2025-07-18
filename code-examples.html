@@ -196,16 +196,16 @@ payload = {
     "sipCredentials": {
         "username": "sipuser",
         "password": "sippass",
-        "domain": "sip.provider.com",
-        "port": 5061,
-        "transport": "tls"
+        "sipServer": "sip.provider.com",
+        "sipPort": 5061,
+        "transport": "tls",
+        "outboundProxy": "outbound.provider.com"
     },
     "aiMessaging": {
-        "tier": "premium",
-        "bundles": 5
+        "standardBundles": 5,
+        "advancedBundles": 0
     },
     "aiAudioServices": {
-        "seatLicenses": 10,
         "additionalHours": 20
     },
     "essentialSeats": 10,

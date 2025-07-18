@@ -122,7 +122,7 @@
                         <div class="ml-3">
                             <h4 class="text-sm font-bold text-gray-800">SIP Credentials Validation</h4>
                             <p class="text-sm text-gray-700 mt-1">
-                                SIP credentials are optional but if included, all fields are required: <code>username</code>, <code>password</code>, <code>sipPort</code> (1-65535), <code>sipServer</code>, <code>transport</code> (udp/tcp/tls), and <code>outboundProxy</code>.
+                                SIP credentials are optional but if included, <code>username</code>, <code>password</code>, <code>sipServer</code>, and <code>outboundProxy</code> are required. The <code>sipPort</code> (1-65535) and <code>transport</code> (udp/tcp/tls) fields are optional but must be provided together. When both are omitted, the system uses SRV lookup to automatically discover the port and transport.
                             </p>
                         </div>
                     </div>

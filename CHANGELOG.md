@@ -5,6 +5,34 @@ All notable changes to the CCaaS Provisioning API will be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2025-01-18
+
+### Changed
+
+- **Updated SIP credentials validation rules**: Made `sipPort` and `transport` fields optional in SIP credentials configuration.
+  - When both `sipPort` and `transport` are omitted, the system now uses SRV lookup to automatically discover the appropriate port and transport protocol
+  - When either `sipPort` or `transport` is provided, both must be present (maintains validation integrity)
+  - Required fields remain: `username`, `password`, `sipServer`, and `outboundProxy`
+  - Updated all documentation, schemas, and examples to reflect the new validation behavior
+
+- **Fixed documentation inconsistencies**: Updated API documentation to match the actual implementation.
+  - Corrected SIP credential field names (`sipServer` instead of `domain`, removed obsolete fields)
+  - Updated AI messaging structure to use `standardBundles`/`advancedBundles` instead of deprecated fields
+  - Fixed ccId structure to use `resellerId`/`divisionId` as implemented
+  - Added new example showing SIP credentials with SRV lookup (without `sipPort`/`transport`)
+
+### Why these changes?
+
+1. **SRV Lookup Support**: Many SIP providers use SRV records for automatic service discovery. Making `sipPort` and `transport` optional allows customers to leverage this standard DNS-based discovery mechanism while maintaining backward compatibility.
+
+2. **Documentation Accuracy**: The previous documentation contained several field names and structures that didn't match the actual API implementation, causing confusion for integrators.
+
+3. **Improved Flexibility**: This change provides customers with two configuration options:
+   - Explicit configuration: Specify both `sipPort` and `transport` for direct connection
+   - Automatic discovery: Omit both fields to enable SRV lookup for dynamic configuration
+
+These changes enhance the API's usability while maintaining strict validation when explicit configuration is chosen.
+
 ## [1.2.0] - 2023-08-10
 
 ### Changed

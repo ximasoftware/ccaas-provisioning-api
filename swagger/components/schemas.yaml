@@ -193,7 +193,10 @@ LicenseUpdateRequest:
       type: object
       description: |
         SIP credentials for upstream SIP registration (optional).
-        If present, all fields within the object are required.
+        If present, username, password, sipServer, and outboundProxy are required.
+        The sipPort and transport fields are optional but must be provided together.
+        When sipPort and transport are omitted, the system will use SRV lookup 
+        to automatically discover the appropriate port and transport protocol.
       properties:
         username:
           type: string
@@ -209,7 +212,9 @@ LicenseUpdateRequest:
           type: integer
           minimum: 1
           maximum: 65535
-          description: SIP port number (required if sipCredentials is present)
+          description: |
+            SIP port number (optional). If provided, transport must also be provided.
+            When omitted (along with transport), the system uses SRV lookup.
           example: 5061
         sipServer:
           type: string
@@ -219,7 +224,9 @@ LicenseUpdateRequest:
         transport:
           type: string
           enum: ["udp", "tcp", "tls"]
-          description: SIP transport protocol (required if sipCredentials is present)
+          description: |
+            SIP transport protocol (optional). If provided, sipPort must also be provided.
+            When omitted (along with sipPort), the system uses SRV lookup.
           example: "udp"
         outboundProxy:
           type: string
@@ -229,9 +236,7 @@ LicenseUpdateRequest:
       required:
         - username
         - password
-        - sipPort
         - sipServer
-        - transport
         - outboundProxy
   required:
     - ccId
