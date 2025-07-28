@@ -33,6 +33,7 @@ This addition provides partners with a secure, auditable way to manage complete 
   - Fixed missing "Licensing Guide" navigation menu item in authentication.html and code-examples.html
   - Added missing DELETE schema references (LicenseDeleteRequest, LicenseDeleteResponse) to swagger/openapi.yaml
   - Ensured all navigation menus are consistent across the entire documentation site
+  - Fixed YAML syntax error in DELETE endpoint description that was preventing proper Swagger UI display
 
 ## [1.3.0] - 2025-07-18
 
