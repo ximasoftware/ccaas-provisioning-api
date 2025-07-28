@@ -295,7 +295,7 @@ delete:
   tags:
     - License Management
   summary: Schedule license resources for deletion
-  description: |\
+  description: |
     Schedules all licensing resources for a customer to be deleted. This operation marks
     resources for deletion rather than immediately removing them, allowing for administrative
     review and recovery if needed.
