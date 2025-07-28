@@ -26,6 +26,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 This addition provides partners with a secure, auditable way to manage complete license lifecycle including proper cleanup and termination procedures.
 
+### Fixed
+
+- **Documentation improvements**: Enhanced readability and navigation consistency across all documentation pages.
+  - Improved wording in licensing.html for better clarity: "provides two main operations" instead of technical endpoint repetition
+  - Fixed missing "Licensing Guide" navigation menu item in authentication.html and code-examples.html
+  - Added missing DELETE schema references (LicenseDeleteRequest, LicenseDeleteResponse) to swagger/openapi.yaml
+  - Ensured all navigation menus are consistent across the entire documentation site
+
 ## [1.3.0] - 2025-07-18
 
 ### Changed

@@ -30,6 +30,10 @@ components:
       $ref: './components/schemas.yaml#/LicenseUpdateRequest'
     LicenseUpdateResponse:
       $ref: './components/schemas.yaml#/LicenseUpdateResponse'
+    LicenseDeleteRequest:
+      $ref: './components/schemas.yaml#/LicenseDeleteRequest'
+    LicenseDeleteResponse:
+      $ref: './components/schemas.yaml#/LicenseDeleteResponse'
 
 # Paths are referenced from external files
 paths:
