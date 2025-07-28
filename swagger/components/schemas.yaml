@@ -66,6 +66,74 @@ Error:
     - code
     - message
 
+LicenseDeleteRequest:
+  type: object
+  properties:
+    ccId:
+      type: object
+      description: Customer contact center identification (required)
+      properties:
+        resellerId:
+          type: string
+          description: Reseller identifier
+          example: "RESELLER001"
+        divisionId:
+          type: string
+          description: Division identifier
+          example: "DIV456"
+      required:
+        - resellerId
+        - divisionId
+  required:
+    - ccId
+
+LicenseDeleteResponse:
+  type: object
+  properties:
+    ccId:
+      type: object
+      description: Customer identifiers
+      properties:
+        resellerId:
+          type: string
+          description: Reseller identifier
+          example: "RESELLER001"
+        divisionId:
+          type: string
+          description: Division identifier
+          example: "DIV456"
+      required:
+        - resellerId
+        - divisionId
+    status:
+      type: string
+      description: Deletion status
+      example: "scheduled_for_deletion"
+      enum: ["scheduled_for_deletion"]
+    message:
+      type: string
+      description: Confirmation message
+      example: "Resources have been scheduled for deletion"
+    scheduledAt:
+      type: string
+      format: date-time
+      description: Timestamp when deletion was scheduled
+      example: "2025-07-28T21:10:05Z"
+    estimatedDeletionTime:
+      type: string
+      description: Estimated timeframe for deletion completion
+      example: "1 week"
+    deletionId:
+      type: string
+      description: Unique identifier for tracking this deletion request
+      example: "del_1753737005_7289"
+  required:
+    - ccId
+    - status
+    - message
+    - scheduledAt
+    - deletionId
+
 LicenseUpdateRequest:
   type: object
   properties:

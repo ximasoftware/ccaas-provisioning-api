@@ -290,3 +290,191 @@ post:
               value:
                 code: CUSTOMER_NOT_FOUND
                 message: No customer found with the provided ccId
+
+delete:
+  tags:
+    - License Management
+  summary: Schedule license resources for deletion
+  description: |\
+    Schedules all licensing resources for a customer to be deleted. This operation marks
+    resources for deletion rather than immediately removing them, allowing for administrative
+    review and recovery if needed.
+
+    **Validation Rules:**
+
+    * Only `ccId` is required for deletion requests
+    * `ccId` must be a valid object with `resellerId` and `divisionId` fields
+    * All other fields are ignored in DELETE requests
+
+    **Authentication Requirements (RFC 7515/7517 JWT Kid Authentication)**
+
+    Each request must include:
+    * A JWT with the following in its header:
+      * `kid`: SHA-1 fingerprint of your client certificate (without colons)
+    * A JWT with the following in its payload:
+      * Standard RFC 7519 claims: `iss`, `sub`, `aud`, `iat`, `exp`, `jti`
+      * A payload hash of the request body
+      * A unique `jti` (JWT ID) - never reuse IDs
+      * An `exp` (expiration) timestamp - max 30 minutes in the future
+
+    **Certificate Fingerprint Calculation**
+
+    The `kid` (Key ID) must be the SHA-1 fingerprint of your client certificate:
+
+    ```python
+    from cryptography import x509
+    import hashlib
+
+    # Load certificate and calculate fingerprint
+    with open("client-cert.crt", "rb") as f:
+        cert_data = f.read()
+    
+    certificate = x509.load_pem_x509_certificate(cert_data)
+    der_bytes = certificate.public_bytes(encoding=x509.Encoding.DER)
+    kid = hashlib.sha1(der_bytes).hexdigest()
+    ```
+
+    **Signature Generation**
+
+    To ensure data integrity, the request body must be signed following the same process as POST requests.
+
+    **Example (Python)**
+
+    ```python
+    import json
+    import hashlib
+    import uuid
+    import time
+    from cryptography import x509
+
+    # Step 1: Calculate certificate fingerprint for kid
+    with open("client-cert.crt", "rb") as f:
+        cert_data = f.read()
+    
+    certificate = x509.load_pem_x509_certificate(cert_data)
+    der_bytes = certificate.public_bytes(encoding=x509.Encoding.DER)
+    kid = hashlib.sha1(der_bytes).hexdigest()
+
+    # Step 2: Deletion payload
+    payload = {
+        "ccId": {
+            "resellerId": "RESELLER001",
+            "divisionId": "DIV456"
+        }
+    }
+
+    # Step 3: Serialize the JSON (important: with specific parameters)
+    payload_string = json.dumps(payload, sort_keys=False, separators=(',', ':')).encode('utf-8')
+
+    # Step 4: Calculate the hash
+    payload_hash = hashlib.sha256(payload_string).hexdigest()
+
+    # Step 5: Current time and expiration (30 minutes in the future)
+    current_time = int(time.time())
+    expiration_time = current_time + (30 * 60)
+
+    # Step 6: Create JWT header with certificate fingerprint
+    jwt_header = {
+        "alg": "RS256",
+        "typ": "JWT",
+        "kid": kid  # Certificate fingerprint
+    }
+
+    # Step 7: Create JWT payload with RFC 7519 standard claims
+    jwt_payload = {
+        "iss": "xima-ccaas",        # Issuer (required)
+        "sub": kid,                 # Subject - certificate fingerprint
+        "aud": "xima-ccaas",        # Audience (required)
+        "payload_hash": payload_hash,
+        "jti": str(uuid.uuid4()),   # Unique ID for this request
+        "exp": expiration_time,     # Expiration timestamp
+        "iat": current_time         # Issued at timestamp
+    }
+
+    # ... (Continue with JWT creation and signing using RS256)
+    ```
+
+    **Important:**
+    * The server will perform the same JSON serialization to normalize the payload before verifying the signature.
+    * Adhering to the specified serialization parameters is crucial for successful signature verification.
+    * The server tracks used JTIs until their expiration to prevent replay attacks.
+    * Resources are scheduled for deletion within 1 week of the request.
+  security:
+    - bearerAuth: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../components/schemas.yaml#/LicenseDeleteRequest'
+        examples:
+          deleteExample:
+            summary: "Schedule license deletion"
+            description: "Schedule all licensing resources for a customer to be deleted"
+            value:
+              ccId:
+                resellerId: "RESELLER001"
+                divisionId: "DIV456"
+  responses:
+    '200':
+      description: Resources successfully scheduled for deletion. Deletion will be completed within the estimated timeframe.
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas.yaml#/LicenseDeleteResponse'
+          examples:
+            successResponse:
+              value:
+                ccId:
+                  resellerId: "RESELLER001"
+                  divisionId: "DIV456"
+                status: "scheduled_for_deletion"
+                message: "Resources have been scheduled for deletion"
+                scheduledAt: "2025-07-28T21:10:05Z"
+                estimatedDeletionTime: "1 week"
+                deletionId: "del_1753737005_7289"
+    '400':
+      description: Bad request - Invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas.yaml#/Error'
+          examples:
+            validationError:
+              value:
+                code: VALIDATION_ERROR
+                message: ccId.resellerId must be a non-empty string
+            invalidJti:
+              value:
+                code: INVALID_JTI
+                message: JTI must be a valid UUID v4 format
+            expiredToken:
+              value:
+                code: EXPIRED_TOKEN
+                message: Request has expired (exp timestamp is in the past)
+    '401':
+      description: Unauthorized - Invalid JWT
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas.yaml#/Error'
+          examples:
+            invalidToken:
+              value:
+                code: INVALID_TOKEN
+                message: The JWT signature is invalid
+            duplicateJti:
+              value:
+                code: DUPLICATE_JTI
+                message: This JTI has already been used
+    '404':
+      description: Not found - Customer not found
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas.yaml#/Error'
+          examples:
+            customerNotFound:
+              value:
+                code: CUSTOMER_NOT_FOUND
+                message: No customer found with the provided ccId

@@ -5,6 +5,27 @@ All notable changes to the CCaaS Provisioning API will be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2025-07-28
+
+### Added
+
+- **NEW: License deletion endpoint**: Added `DELETE /v1/licensing/update` endpoint for scheduling complete license resource deletion.
+  - Requires only `ccId` object for customer identification (all other fields ignored)
+  - Schedules all licensing resources for deletion within 1 week
+  - Uses same JWT kid authentication as existing POST endpoint
+  - Returns deletion confirmation with tracking ID and estimated completion time
+  - Added complete Swagger documentation with examples and error codes
+  - Added comprehensive API test coverage for authentication, validation, and edge cases
+
+### Why this addition?
+
+1. **Administrative Requirement**: Partners need a way to completely remove customer licensing when accounts are closed or terminated.
+2. **Safety**: Deletion is scheduled rather than immediate, allowing for administrative review and recovery if needed.
+3. **Auditability**: Each deletion request generates a unique tracking ID for monitoring and compliance purposes.
+4. **Consistency**: Uses identical authentication and validation patterns as existing endpoints for seamless integration.
+
+This addition provides partners with a secure, auditable way to manage complete license lifecycle including proper cleanup and termination procedures.
+
 ## [1.3.0] - 2025-07-18
 
 ### Changed
