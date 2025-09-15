@@ -189,17 +189,17 @@ LicenseUpdateRequest:
       minimum: 0
       description: |
         Number of Workforce Optimization seats (optional).
-        If present: Must be either 0 (remove license) or >= 5.
+        If present: Must be either 0 (remove license) or >= 10.
         Value of 0 indicates license removal.
-      example: 5
+      example: 10
     workforceManagementSeats:
       type: integer
       minimum: 0
       description: |
         Number of Workforce Management seats (optional).
-        If present: Must be either 0 (remove license) or >= 5.
+        If present: Must be either 0 (remove license) or >= 10.
         Value of 0 indicates license removal.
-      example: 5
+      example: 10
     speechAnalyticsSeats:
       type: integer
       minimum: 0

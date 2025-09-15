@@ -87,7 +87,7 @@ post:
         "essentialSeats": 0,           # Remove essential seats
         "professionalSeats": 5,
         "eliteSeats": 5,
-        "workforceOptimizationSeats": 5,
+        "workforceOptimizationSeats": 10,
         "speechAnalyticsSeats": 5,
         "dialerSeats": 10,             # Minimum 10 for dialer seats
         "aiMessaging": {
@@ -167,7 +167,7 @@ post:
               essentialSeats: 0
               professionalSeats: 5
               eliteSeats: 5
-              workforceOptimizationSeats: 5
+              workforceOptimizationSeats: 10
               speechAnalyticsSeats: 5
               dialerSeats: 10
               aiMessaging:
