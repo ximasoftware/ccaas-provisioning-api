@@ -144,7 +144,7 @@
                         <h4 class="font-bold text-gray-900 mb-2">Adding New Licenses</h4>
                         <p class="text-gray-600 mb-3">Provision new seats with minimum values:</p>
                         <pre class="bg-gray-800 text-gray-100 p-4 rounded text-sm overflow-x-auto"><code>{
-      "ccId": {"resellerId": "RESELLER001", "divisionId": "DIV456"},
+      "ccId": {"resellerId": "RESELLER001", "tenantId": "TENANT456"},
       "digitalOnlySeats": 5,
       "speechAnalyticsSeats": 5,
       "dialerSeats": 10,
@@ -156,7 +156,7 @@
                         <h4 class="font-bold text-gray-900 mb-2">Removing Licenses</h4>
                         <p class="text-gray-600 mb-3">Set values to 0 to remove licenses:</p>
                         <pre class="bg-gray-800 text-gray-100 p-4 rounded text-sm overflow-x-auto"><code>{
-      "ccId": {"resellerId": "RESELLER001", "divisionId": "DIV456"},
+      "ccId": {"resellerId": "RESELLER001", "tenantId": "TENANT456"},
       "essentialSeats": 0,
       "dialerSeats": 0,
       "aiMessaging": {"standardBundles": 0, "advancedBundles": 0}
@@ -167,7 +167,7 @@
                         <h4 class="font-bold text-gray-900 mb-2">Switching AI Messaging Tiers</h4>
                         <p class="text-gray-600 mb-3">Switch from Standard to Advanced (note mutual exclusivity):</p>
                         <pre class="bg-gray-800 text-gray-100 p-4 rounded text-sm overflow-x-auto"><code>{
-      "ccId": {"resellerId": "RESELLER001", "divisionId": "DIV456"},
+      "ccId": {"resellerId": "RESELLER001", "tenantId": "TENANT456"},
       "aiMessaging": {"standardBundles": 0, "advancedBundles": 2}
     }</code></pre>
                     </div>

@@ -81,7 +81,9 @@ post:
     payload = {
         "ccId": {
             "resellerId": "RESELLER001",
-            "divisionId": "DIV456"
+            "resellerName": "Acme Distribution",
+            "tenantId": "TENANT456",
+            "tenantName": "West Coast Sales"
         },
         "digitalOnlySeats": 5,
         "essentialSeats": 0,           # Remove essential seats
@@ -162,7 +164,9 @@ post:
             value:
               ccId:
                 resellerId: "RESELLER001"
-                divisionId: "DIV456"
+                resellerName: "Acme Distribution"
+                tenantId: "TENANT456"
+                tenantName: "West Coast Sales"
               digitalOnlySeats: 5
               essentialSeats: 0
               professionalSeats: 5
@@ -188,7 +192,9 @@ post:
             value:
               ccId:
                 resellerId: "RESELLER001"
-                divisionId: "DIV456"
+                resellerName: "Acme Distribution"
+                tenantId: "TENANT456"
+                tenantName: "West Coast Sales"
               digitalOnlySeats: 5
               sipCredentials:
                 username: "user123"
@@ -207,7 +213,9 @@ post:
               value:
                 ccId:
                   resellerId: "RESELLER001"
-                  divisionId: "DIV456"
+                  resellerName: "Acme Distribution"
+                  tenantId: "TENANT456"
+                  tenantName: "West Coast Sales"
                 changes:
                   digitalOnlySeats:
                     oldValue: 0
@@ -303,7 +311,7 @@ delete:
     **Validation Rules:**
 
     * Only `ccId` is required for deletion requests
-    * `ccId` must be a valid object with `resellerId` and `divisionId` fields
+    * `ccId` must be a valid object with `resellerId` and `tenantId` fields
     * All other fields are ignored in DELETE requests
 
     **Authentication Requirements (RFC 7515/7517 JWT Kid Authentication)**
@@ -359,7 +367,7 @@ delete:
     payload = {
         "ccId": {
             "resellerId": "RESELLER001",
-            "divisionId": "DIV456"
+            "tenantId": "TENANT456"
         }
     }
 
@@ -414,7 +422,7 @@ delete:
             value:
               ccId:
                 resellerId: "RESELLER001"
-                divisionId: "DIV456"
+                tenantId: "TENANT456"
   responses:
     '200':
       description: Resources successfully scheduled for deletion. Deletion will be completed within the estimated timeframe.
@@ -427,7 +435,7 @@ delete:
               value:
                 ccId:
                   resellerId: "RESELLER001"
-                  divisionId: "DIV456"
+                  tenantId: "TENANT456"
                 status: "scheduled_for_deletion"
                 message: "Resources have been scheduled for deletion"
                 scheduledAt: "2025-07-28T21:10:05Z"

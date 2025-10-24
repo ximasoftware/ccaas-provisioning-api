@@ -77,13 +77,13 @@ LicenseDeleteRequest:
           type: string
           description: Reseller identifier
           example: "RESELLER001"
-        divisionId:
+        tenantId:
           type: string
-          description: Division identifier
-          example: "DIV456"
+          description: Tenant identifier
+          example: "TENANT456"
       required:
         - resellerId
-        - divisionId
+        - tenantId
   required:
     - ccId
 
@@ -98,13 +98,13 @@ LicenseDeleteResponse:
           type: string
           description: Reseller identifier
           example: "RESELLER001"
-        divisionId:
+        tenantId:
           type: string
-          description: Division identifier
-          example: "DIV456"
+          description: Tenant identifier
+          example: "TENANT456"
       required:
         - resellerId
-        - divisionId
+        - tenantId
     status:
       type: string
       description: Deletion status
@@ -145,13 +145,21 @@ LicenseUpdateRequest:
           type: string
           description: Reseller identifier
           example: "RESELLER001"
-        divisionId:
+        resellerName:
           type: string
-          description: Division identifier
-          example: "DIV456"
+          description: Reseller's display name (Required on the first request, optional after that)
+          example: "Acme Distribution"
+        tenantId:
+          type: string
+          description: Tenant identifier
+          example: "TENANT456"
+        tenantName:
+          type: string
+          description: Tenant's display name (Required on the first request, optional after that)
+          example: "West Coast Sales"
       required:
         - resellerId
-        - divisionId
+        - tenantId
     digitalOnlySeats:
       type: integer
       minimum: 0
@@ -320,13 +328,21 @@ LicenseUpdateResponse:
           type: string
           description: Reseller identifier
           example: "RESELLER001"
-        divisionId:
+        resellerName:
           type: string
-          description: Division identifier
-          example: "DIV456"
+          description: Reseller's display name (Optional)
+          example: "Acme Distribution"
+        tenantId:
+          type: string
+          description: Tenant identifier
+          example: "TENANT456"
+        tenantName:
+          type: string
+          description: Tenant's display name (Required the first request, optional after that)
+          example: "West Coast Sales"
       required:
         - resellerId
-        - divisionId
+        - tenantId
     changes:
       type: object
       description: Details of the changes made to the license. Only fields that were changed as a result of the POST are included in the response.
