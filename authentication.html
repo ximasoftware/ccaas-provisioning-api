@@ -275,7 +275,9 @@ print(f"Kid for JWT: {kid}")
 license_payload = {
     "ccId": {
         "resellerId": "RESELLER001",
-        "divisionId": "DIV456"
+        "resellerName": "Acme Distribution",
+        "tenantId": "TENANT456",
+        "tenantName": "West Coast Sales"
     },
     "aiMessaging": {
         "standardBundles": 5,
@@ -492,7 +494,9 @@ else:
         <pre class="line-numbers language-json"><code>{
   "ccId": {
     "resellerId": "RESELLER001",
-    "divisionId": "DIV456"
+    "resellerName": "Acme Distribution",
+    "divisionId": "TENANT456",
+    "divisionName": "West Coast Sales"
   },
   "aiMessaging": {
     "standardBundles": 5,
